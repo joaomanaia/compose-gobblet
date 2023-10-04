@@ -1,7 +1,5 @@
-*.iml
 .gradle
 /local.properties
-/.idea
 .DS_Store
 build/
 /captures
@@ -13,3 +11,13 @@ iosApp/iosApp.xcworkspace/*
 iosApp/iosApp.xcodeproj/*
 !iosApp/iosApp.xcodeproj/project.pbxproj
 shared/shared.podspec
+
+*.iml
+.idea/*
+!.idea/copyright
+# Keep the code styles.
+!/.idea/codeStyles
+/.idea/codeStyles/*
+!/.idea/codeStyles/Project.xml
+!/.idea/codeStyles/codeStyleConfig.xml
+!.idea/runConfigurations/
