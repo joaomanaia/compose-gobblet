@@ -1,4 +1,4 @@
-package com.myapplication
+package me.joaomanaia.tictactoe2
 
 import MainView
 import android.os.Bundle

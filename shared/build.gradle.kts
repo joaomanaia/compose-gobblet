@@ -16,7 +16,7 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(compose.material3)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
             }
@@ -38,7 +38,7 @@ kotlin {
 
 android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-    namespace = "com.myapplication.common"
+    namespace = "me.joaomanaia.tictactoe2.common"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
