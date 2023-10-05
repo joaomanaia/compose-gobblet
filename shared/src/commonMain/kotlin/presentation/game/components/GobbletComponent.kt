@@ -15,7 +15,7 @@ import core.icons.GobbletTierIcons
 import core.icons.gobblettiericons.Tier1
 import core.icons.gobblettiericons.Tier2
 import core.icons.gobblettiericons.Tier3
-import core.presentation.theme.TicTacToe2Theme
+import core.presentation.theme.GobbletTheme
 import model.GobbletTier
 import model.Player
 
@@ -76,7 +76,7 @@ private const val ICON_PADDING_DIVISOR = 5f
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun GobbletComponentPreview() {
-    TicTacToe2Theme {
+    GobbletTheme {
         Surface {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),

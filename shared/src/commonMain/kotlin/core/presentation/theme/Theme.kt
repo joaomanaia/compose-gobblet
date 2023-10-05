@@ -10,7 +10,7 @@ val LightThemeColors = lightColorScheme()
 val DarkThemeColors = darkColorScheme()
 
 @Composable
-expect fun TicTacToe2Theme(
+expect fun GobbletTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit

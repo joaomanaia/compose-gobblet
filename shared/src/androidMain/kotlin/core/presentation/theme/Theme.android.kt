@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 @Composable
-actual fun TicTacToe2Theme(
+actual fun GobbletTheme(
     darkTheme: Boolean,
     dynamicColor: Boolean,
     content: @Composable () -> Unit

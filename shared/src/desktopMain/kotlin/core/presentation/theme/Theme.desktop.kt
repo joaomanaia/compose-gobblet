@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
 @Composable
-actual fun TicTacToe2Theme(
+actual fun GobbletTheme(
     darkTheme: Boolean,
     dynamicColor: Boolean,
     content: @Composable () -> Unit

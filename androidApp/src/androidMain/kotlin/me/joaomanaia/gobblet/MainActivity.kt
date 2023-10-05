@@ -1,4 +1,4 @@
-package me.joaomanaia.tictactoe2
+package me.joaomanaia.gobblet
 
 import MainView
 import android.os.Bundle

@@ -18,12 +18,12 @@ kotlin {
 
 android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-    namespace = "me.joaomanaia.tictactoe2"
+    namespace = "me.joaomanaia.gobblet"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        applicationId = "me.joaomanaia.tictactoe2.MyApplication"
+        applicationId = "me.joaomanaia.gobblet.MyApplication"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

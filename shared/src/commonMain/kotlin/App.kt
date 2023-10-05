@@ -1,10 +1,10 @@
 import androidx.compose.runtime.Composable
-import core.presentation.theme.TicTacToe2Theme
+import core.presentation.theme.GobbletTheme
 import presentation.game.GameScreen
 
 @Composable
 fun App() {
-    TicTacToe2Theme {
+    GobbletTheme {
         GameScreen()
     }
 }
