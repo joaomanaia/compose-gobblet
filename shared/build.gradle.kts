@@ -17,8 +17,17 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.uiTooling)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+
+                implementation(libs.kotlinx.coroutines.core)
+
+                implementation(libs.moko.mvvm.core)
+                implementation(libs.moko.mvvm.compose)
+                implementation(libs.moko.mvvm.flow)
+                implementation(libs.moko.mvvm.flow.compose)
             }
         }
         val androidMain by getting {
