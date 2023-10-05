@@ -3,5 +3,5 @@ package presentation.game
 sealed interface GameScreenUiEvent {
     data class OnItemClick(val index: Int) : GameScreenUiEvent
 
-    data object OnRegenerateClick : GameScreenUiEvent
+    data object OnResetClick : GameScreenUiEvent
 }

@@ -26,7 +26,7 @@ class GameScreenViewModel : ViewModel() {
                     currentState.copy(boardGobblets = newBoardGobblets)
                 }
             }
-            is GameScreenUiEvent.OnRegenerateClick -> {
+            is GameScreenUiEvent.OnResetClick -> {
                 _uiState.update { currentState ->
                     currentState.copy(
                         boardGobblets = emptyBoardList(currentState.boardSize)

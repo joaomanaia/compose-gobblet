@@ -1,5 +1,6 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -27,6 +28,9 @@ kotlin {
                 implementation(libs.moko.mvvm.compose)
                 implementation(libs.moko.mvvm.flow)
                 implementation(libs.moko.mvvm.flow.compose)
+
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
             }
         }
         val androidMain by getting {
@@ -35,6 +39,8 @@ kotlin {
                 api(libs.androidx.appcompat.appcompat)
                 api(libs.androidx.core.ktx)
                 implementation(compose.uiTooling)
+
+                implementation(libs.koin.android)
             }
         }
         val desktopMain by getting {

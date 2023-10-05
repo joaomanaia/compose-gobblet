@@ -27,7 +27,7 @@ internal fun GobbletBoard(
     val board2d = boardGobblets.chunked(boardSize)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .drawBackgroundGrid(
                 gridSize = boardSize,

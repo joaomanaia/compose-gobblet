@@ -1,5 +1,7 @@
 [versions]
 
+koin-core = "3.5.0"
+koin-compose = "1.1.0"
 kotlin = "1.9.10"
 android-gradle-plugin = "8.0.2"
 compose = "1.5.2"
@@ -18,6 +20,9 @@ android-minSdk = "21"
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-appcompat-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat-appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-core" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 
 moko-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "moko" }

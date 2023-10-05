@@ -1,45 +1,88 @@
 package presentation.game
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.icerock.moko.mvvm.compose.getViewModel
-import dev.icerock.moko.mvvm.compose.viewModelFactory
+import core.presentation.theme.spacing
+import model.GobbletTier
+import model.Player
+import org.koin.compose.koinInject
 import presentation.game.components.GobbletBoard
+import presentation.game.components.TierRowItems
 
 @Composable
-internal fun GameScreen() {
-    val viewModel = getViewModel(
-        key = "GameScreen",
-        factory = viewModelFactory {
-            GameScreenViewModel()
-        }
-    )
-
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun GameScreen(
+    viewModel: GameScreenViewModel = koinInject()
+) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold {
-        Column {
-            Button(
-                onClick = {
-                    viewModel.onEvent(GameScreenUiEvent.OnRegenerateClick)
-                },
-            ) {
-                Text(text = "Regenerate")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+    GameScreen(
+        uiState = uiState,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+@ExperimentalMaterial3Api
+internal fun GameScreen(
+    uiState: GameScreenUiState,
+    onEvent: (event: GameScreenUiEvent) -> Unit
+) {
+    val mediumSpacing = MaterialTheme.spacing.medium
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Gobblet") },
+                actions = {
+                    IconButton(
+                        onClick = { onEvent(GameScreenUiEvent.OnResetClick) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Reset"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(mediumSpacing)
+        ) {
+            TierRowItems(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = mediumSpacing)
+                    .padding(top = mediumSpacing),
+                items = uiState.player1Items,
+                player = Player.PLAYER_1
+            )
+
             GobbletBoard(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = mediumSpacing),
                 boardGobblets = uiState.boardGobblets,
                 onItemClick = { index ->
-                    viewModel.onEvent(GameScreenUiEvent.OnItemClick(index))
+                    onEvent(GameScreenUiEvent.OnItemClick(index))
                 }
+            )
+
+            TierRowItems(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = mediumSpacing)
+                    .padding(bottom = mediumSpacing),
+                items = uiState.player2Items,
+                player = Player.PLAYER_2
             )
         }
     }
