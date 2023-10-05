@@ -1,6 +1,5 @@
 package presentation.game.components
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -15,7 +14,6 @@ import core.icons.GobbletTierIcons
 import core.icons.gobblettiericons.Tier1
 import core.icons.gobblettiericons.Tier2
 import core.icons.gobblettiericons.Tier3
-import core.presentation.theme.GobbletTheme
 import model.GobbletTier
 import model.Player
 
@@ -24,7 +22,8 @@ internal fun GobbletComponent(
     modifier: Modifier = Modifier,
     tier: GobbletTier,
     player: Player,
-    size: Dp = DEFAULT_TIER_SIZE
+    size: Dp = DEFAULT_TIER_SIZE,
+    onClick: () -> Unit = {},
 ) {
     val backgroundColor = when (player) {
         Player.PLAYER_1 -> MaterialTheme.colorScheme.primaryContainer
@@ -40,7 +39,8 @@ internal fun GobbletComponent(
         modifier = modifier.size(size),
         shape = CircleShape,
         color = contentColor,
-        contentColor = backgroundColor
+        contentColor = backgroundColor,
+        onClick = onClick
     ) {
         Surface(
             modifier = Modifier
@@ -71,26 +71,3 @@ private val DEFAULT_TIER_SIZE = 64.dp
 
 private const val BORDER_PADDING_DIVISOR = 16f
 private const val ICON_PADDING_DIVISOR = 5f
-
-@Preview
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
-private fun GobbletComponentPreview() {
-    GobbletTheme {
-        Surface {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                GobbletTier.entries.forEach { tier ->
-                    Player.entries.forEach { player ->
-                        GobbletComponent(
-                            tier = tier,
-                            player = player
-                        )
-                    }
-                }
-            }
-        }
-    }
-}

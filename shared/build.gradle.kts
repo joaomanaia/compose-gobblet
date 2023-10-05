@@ -1,4 +1,5 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -17,7 +18,6 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
-                implementation(compose.uiTooling)
                 @OptIn(ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
@@ -34,11 +34,13 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.appcompat.appcompat)
                 api(libs.androidx.core.ktx)
+                implementation(compose.uiTooling)
             }
         }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.common)
+                implementation(compose.uiTooling)
             }
         }
     }
