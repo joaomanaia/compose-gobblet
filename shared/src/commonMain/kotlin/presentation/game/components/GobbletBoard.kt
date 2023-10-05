@@ -9,8 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import model.GobbletBoardItem
+import model.GobbletTier
+import core.DropTarget
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -18,7 +21,10 @@ import kotlin.math.sqrt
 internal fun GobbletBoard(
     modifier: Modifier = Modifier,
     boardGobblets: List<GobbletBoardItem?> = emptyList(),
-    onItemClick: (index: Int) -> Unit = {},
+    onItemDrop: (
+        index: Int,
+        tier: GobbletTier
+    ) -> Unit = { _, _ -> }
 ) {
     val boardSize = sqrt(boardGobblets.size.toDouble()).roundToInt()
 
@@ -43,29 +49,41 @@ internal fun GobbletBoard(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 rows.forEachIndexed { rowIndex, item ->
-                    Box(
+                    DropTarget<GobbletTier>(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (item == null) {
-                            EmptyComponent(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(1.dp),
-                                onClick = { onItemClick(rowIndex + columnIndex * boardSize) }
-                            )
-                        } else {
-                            GobbletComponent(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                                tier = item.tier,
-                                player = item.player,
-                                onClick = { onItemClick(rowIndex + columnIndex * boardSize) }
-                            )
+                    ) { isInBound, tierItem ->
+                        tierItem?.let { tier ->
+                            onItemDrop(rowIndex + columnIndex * boardSize, tier)
+                        }
+
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(1.dp),
+                            tonalElevation = if (isInBound) 2.dp else 0.dp,
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+
+                                if (item == null) {
+                                    EmptyComponent(
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
+                                } else {
+                                    GobbletComponent(
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .padding(16.dp)
+                                            .fillMaxSize(),
+                                        tier = item.tier,
+                                        player = item.player
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -77,11 +95,11 @@ internal fun GobbletBoard(
 @Composable
 private fun EmptyComponent(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    tonalElevation: Dp = 0.dp
 ) {
     Surface(
         modifier = modifier,
-        onClick = onClick
+        tonalElevation = tonalElevation
     ) {}
 }
 

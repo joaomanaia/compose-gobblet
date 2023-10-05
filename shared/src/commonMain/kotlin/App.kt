@@ -1,3 +1,4 @@
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import core.presentation.theme.GobbletTheme
 import di.appModule
@@ -12,7 +13,9 @@ fun App() {
         }
     ) {
         GobbletTheme {
-            GameScreen()
+            Surface {
+                GameScreen()
+            }
         }
     }
 }

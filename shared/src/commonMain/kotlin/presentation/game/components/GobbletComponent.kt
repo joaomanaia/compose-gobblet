@@ -22,8 +22,7 @@ internal fun GobbletComponent(
     modifier: Modifier = Modifier,
     tier: GobbletTier,
     player: Player,
-    size: Dp = DEFAULT_TIER_SIZE,
-    onClick: () -> Unit = {},
+    size: Dp = DEFAULT_TIER_SIZE
 ) {
     val backgroundColor = when (player) {
         Player.PLAYER_1 -> MaterialTheme.colorScheme.primaryContainer
@@ -39,8 +38,7 @@ internal fun GobbletComponent(
         modifier = modifier.size(size),
         shape = CircleShape,
         color = contentColor,
-        contentColor = backgroundColor,
-        onClick = onClick
+        contentColor = backgroundColor
     ) {
         Surface(
             modifier = Modifier

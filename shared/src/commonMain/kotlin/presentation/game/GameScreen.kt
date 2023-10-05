@@ -6,13 +6,12 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import core.presentation.theme.spacing
-import model.GobbletTier
 import model.Player
 import org.koin.compose.koinInject
 import presentation.game.components.GobbletBoard
 import presentation.game.components.TierRowItems
+import core.LongPressDraggable
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,38 +51,42 @@ internal fun GameScreen(
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(mediumSpacing)
+        LongPressDraggable(
+            modifier = Modifier.fillMaxSize()
         ) {
-            TierRowItems(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = mediumSpacing)
-                    .padding(top = mediumSpacing),
-                items = uiState.player1Items,
-                player = Player.PLAYER_1
-            )
+            Column(
+                modifier = Modifier.padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(mediumSpacing)
+            ) {
+                TierRowItems(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = mediumSpacing)
+                        .padding(top = mediumSpacing),
+                    items = uiState.player1Items,
+                    player = Player.PLAYER_1
+                )
 
-            GobbletBoard(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(horizontal = mediumSpacing),
-                boardGobblets = uiState.boardGobblets,
-                onItemClick = { index ->
-                    onEvent(GameScreenUiEvent.OnItemClick(index))
-                }
-            )
+                GobbletBoard(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = mediumSpacing),
+                    boardGobblets = uiState.boardGobblets,
+                    onItemDrop = { index, tier ->
+                        onEvent(GameScreenUiEvent.OnItemClick(index, tier))
+                    }
+                )
 
-            TierRowItems(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = mediumSpacing)
-                    .padding(bottom = mediumSpacing),
-                items = uiState.player2Items,
-                player = Player.PLAYER_2
-            )
+                TierRowItems(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = mediumSpacing)
+                        .padding(bottom = mediumSpacing),
+                    items = uiState.player2Items,
+                    player = Player.PLAYER_2
+                )
+            }
         }
     }
 }

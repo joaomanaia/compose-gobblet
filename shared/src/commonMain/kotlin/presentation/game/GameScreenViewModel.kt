@@ -19,11 +19,14 @@ class GameScreenViewModel : ViewModel() {
                     val newBoardGobblets = currentState.boardGobblets.toMutableList()
 
                     newBoardGobblets[event.index] = GobbletBoardItem(
-                        tier = GobbletTier.entries.random(),
-                        player = Player.entries.random()
+                        tier = event.tier,
+                        player = currentState.currentPlayer
                     )
 
-                    currentState.copy(boardGobblets = newBoardGobblets)
+                    currentState.copy(
+                        boardGobblets = newBoardGobblets,
+                        currentPlayer = currentState.currentPlayer.next()
+                    )
                 }
             }
             is GameScreenUiEvent.OnResetClick -> {

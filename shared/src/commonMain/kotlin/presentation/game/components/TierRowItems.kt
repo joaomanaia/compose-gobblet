@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import core.presentation.theme.spacing
 import model.GobbletTier
 import model.Player
+import core.DragTarget
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,10 +51,14 @@ internal fun TierRowItems(
                         }
                     }
                 ) {
-                    GobbletComponent(
-                        tier = item.key,
-                        player = player
-                    )
+                    DragTarget(
+                        dataToDrop = item.key,
+                    ) {
+                        GobbletComponent(
+                            tier = item.key,
+                            player = player
+                        )
+                    }
                 }
             }
         }

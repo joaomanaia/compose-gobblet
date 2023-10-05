@@ -8,7 +8,7 @@ import model.Player
 data class GameScreenUiState(
     val boardSize: Int = 3,
     val boardGobblets: List<GobbletBoardItem?> = emptyBoardList(boardSize),
-    val playerTurn: Player = Player.PLAYER_1,
+    val currentPlayer: Player = Player.PLAYER_1,
     val player1Items: List<GobbletTier> = defaultPlayerItems(boardSize),
     val player2Items: List<GobbletTier> = defaultPlayerItems(boardSize),
 )
