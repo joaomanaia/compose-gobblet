@@ -67,5 +67,10 @@ internal class GobbletTierTest {
         assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_1).isEqualTo(true)
         assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_2).isEqualTo(true)
         assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_3).isEqualTo(false)
+
+        // If tierToStack is null, then any tier can be stacked on it
+        assertThat(GobbletTier.TIER_1 canBeStackedOn null).isEqualTo(true)
+        assertThat(GobbletTier.TIER_2 canBeStackedOn null).isEqualTo(true)
+        assertThat(GobbletTier.TIER_3 canBeStackedOn null).isEqualTo(true)
     }
 }

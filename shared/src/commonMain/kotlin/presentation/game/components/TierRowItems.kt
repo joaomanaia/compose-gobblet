@@ -22,7 +22,8 @@ import core.DragTarget
 internal fun TierRowItems(
     modifier: Modifier = Modifier,
     items: List<GobbletTier>,
-    player: Player
+    player: Player,
+    enabled: Boolean = true,
 ) {
     val groupedItems by remember {
         derivedStateOf {
@@ -30,10 +31,17 @@ internal fun TierRowItems(
         }
     }
 
+    val surfaceColor = if (enabled) {
+        MaterialTheme.colorScheme.surface
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.1f)
+    }
+
     Surface(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
-        tonalElevation = 4.dp
+        tonalElevation = 8.dp,
+        color = surfaceColor
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -46,17 +54,26 @@ internal fun TierRowItems(
                 BadgedBox(
                     modifier = Modifier,
                     badge = {
-                        Badge {
-                            Text(text = item.value.size.toString())
+                        Badge(
+                            containerColor = BadgeDefaults.containerColor.copy(
+                                alpha = if (enabled) 1f else 0.1f
+                            )
+                        ) {
+                            Text(
+                                text = item.value.size.toString(),
+                                style = MaterialTheme.typography.titleSmall
+                            )
                         }
                     }
                 ) {
                     DragTarget(
                         dataToDrop = item.key,
+                        enabled = enabled
                     ) {
                         GobbletComponent(
                             tier = item.key,
-                            player = player
+                            player = player,
+                            enabled = enabled
                         )
                     }
                 }

@@ -53,9 +53,19 @@ internal fun GobbletBoard(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight(),
-                    ) { isInBound, tierItem ->
-                        tierItem?.let { tier ->
-                            onItemDrop(rowIndex + columnIndex * boardSize, tier)
+                        onDroppedOnTarget = { droppedTier ->
+                            val canBeStacked = droppedTier canBeStackedOn item?.tier
+                            if (!canBeStacked) return@DropTarget
+
+                            onItemDrop(rowIndex + columnIndex * boardSize, droppedTier)
+                        },
+                    ) { isInBound, draggingTier ->
+                        val canBeStacked = draggingTier != null && draggingTier canBeStackedOn item?.tier
+
+                        val surfaceColor = when {
+                            isInBound && canBeStacked -> MaterialTheme.colorScheme.primary
+                            isInBound && !canBeStacked -> MaterialTheme.colorScheme.error
+                            else -> MaterialTheme.colorScheme.surface
                         }
 
                         Surface(
@@ -63,6 +73,7 @@ internal fun GobbletBoard(
                                 .fillMaxSize()
                                 .padding(1.dp),
                             tonalElevation = if (isInBound) 2.dp else 0.dp,
+                            color = surfaceColor
                         ) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),

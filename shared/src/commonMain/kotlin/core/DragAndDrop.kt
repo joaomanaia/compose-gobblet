@@ -63,6 +63,7 @@ fun LongPressDraggable(
 fun <T> DragTarget(
     modifier: Modifier = Modifier,
     dataToDrop: T,
+    enabled: Boolean = true,
     content: @Composable (() -> Unit)
 ) {
     var currentPosition by remember { mutableStateOf(Offset.Zero) }
@@ -72,7 +73,9 @@ fun <T> DragTarget(
         modifier = modifier
             .onGloballyPositioned {
                 currentPosition = it.localToWindow(Offset.Zero)
-            }.pointerInput(Unit) {
+            }.pointerInput(enabled) { // Check for changes of enabled state, if the state changes this block will restart and check if it can drag
+                if (!enabled) return@pointerInput
+
                 detectDragGesturesAfterLongPress(
                     onDragStart = {
                         currentState.dataToDrop = dataToDrop
@@ -102,7 +105,8 @@ fun <T> DragTarget(
 @Composable
 fun <T> DropTarget(
     modifier: Modifier = Modifier,
-    content: @Composable (BoxScope.(isInBound: Boolean, data: T?) -> Unit)
+    onDroppedOnTarget: (data: T) -> Unit,
+    content: @Composable (BoxScope.(isInBound: Boolean, draggingData: T?) -> Unit)
 ) {
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
@@ -118,8 +122,10 @@ fun <T> DropTarget(
             }
         }
     ) {
+        content(isCurrentDropTarget, dragInfo.dataToDrop as T?)
+
         val data = if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as T? else null
-        content(isCurrentDropTarget, data)
+        if (data != null) onDroppedOnTarget(data)
     }
 }
 

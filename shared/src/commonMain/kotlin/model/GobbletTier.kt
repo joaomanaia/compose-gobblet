@@ -44,8 +44,15 @@ value class GobbletTier private constructor(
         return tier.compareTo(other.tier)
     }
 
-
-    infix fun canBeStackedOn(other: GobbletTier): Boolean {
-        return tier > other.tier
+    /**
+     * A gobblet can be stacked on top of another gobblet if and only if its tier is greater than
+     * the tier of the gobblet it is being stacked on.
+     *
+     * If [tierToStack] is `null`, then this tier can be stacked on top of it.
+     *
+     * @return `true` if this tier can be stacked on top of [tierToStack], `false` otherwise.
+     */
+    infix fun canBeStackedOn(tierToStack: GobbletTier?): Boolean {
+        return tierToStack == null || tier > tierToStack.tier
     }
 }

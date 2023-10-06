@@ -11,7 +11,13 @@ data class GameScreenUiState(
     val currentPlayer: Player = Player.PLAYER_1,
     val player1Items: List<GobbletTier> = defaultPlayerItems(boardSize),
     val player2Items: List<GobbletTier> = defaultPlayerItems(boardSize),
-)
+) {
+    val isPlayer1Turn: Boolean
+        get() = currentPlayer == Player.PLAYER_1
+
+    val isPlayer2Turn: Boolean
+        get() = currentPlayer == Player.PLAYER_2
+}
 
 internal fun emptyBoardList(boardSize: Int): List<GobbletBoardItem?> {
     return List(boardSize * boardSize) { null }

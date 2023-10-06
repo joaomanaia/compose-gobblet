@@ -64,7 +64,8 @@ internal fun GameScreen(
                         .padding(horizontal = mediumSpacing)
                         .padding(top = mediumSpacing),
                     items = uiState.player1Items,
-                    player = Player.PLAYER_1
+                    player = Player.PLAYER_1,
+                    enabled = uiState.isPlayer1Turn
                 )
 
                 GobbletBoard(
@@ -84,7 +85,8 @@ internal fun GameScreen(
                         .padding(horizontal = mediumSpacing)
                         .padding(bottom = mediumSpacing),
                     items = uiState.player2Items,
-                    player = Player.PLAYER_2
+                    player = Player.PLAYER_2,
+                    enabled = uiState.isPlayer2Turn
                 )
             }
         }

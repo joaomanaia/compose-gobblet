@@ -17,17 +17,22 @@ internal fun GobbletComponent(
     modifier: Modifier = Modifier,
     tier: GobbletTier,
     player: Player,
-    size: Dp = DEFAULT_TIER_SIZE
+    size: Dp = DEFAULT_TIER_SIZE,
+    enabled: Boolean = true,
 ) {
     val backgroundColor = when (player) {
         Player.PLAYER_1 -> MaterialTheme.colorScheme.primaryContainer
         Player.PLAYER_2 -> MaterialTheme.colorScheme.secondaryContainer
-    }
+    }.copy(
+        alpha = if (enabled) 1f else 0.1f
+    )
 
     val contentColor = when (player) {
         Player.PLAYER_1 -> MaterialTheme.colorScheme.onPrimaryContainer
         Player.PLAYER_2 -> MaterialTheme.colorScheme.onSecondaryContainer
-    }
+    }.copy(
+        alpha = if (enabled) 1f else 0.1f
+    )
 
     Surface(
         modifier = modifier.size(size),
