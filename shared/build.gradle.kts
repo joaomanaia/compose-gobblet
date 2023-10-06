@@ -57,6 +57,8 @@ kotlin {
                 implementation(compose.uiTooling)
 
                 implementation(libs.koin.android)
+
+                implementation(libs.kotlinx.coroutines.android)
             }
         }
 
@@ -64,6 +66,8 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.common)
                 implementation(compose.uiTooling)
+
+                implementation(libs.kotlinx.coroutines.swing)
             }
         }
     }

@@ -4,9 +4,8 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import model.GobbletBoardItem
-import model.GobbletTier
-import model.Player
 
 class GameScreenViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(GameScreenUiState())
@@ -16,24 +15,37 @@ class GameScreenViewModel : ViewModel() {
         when (event) {
             is GameScreenUiEvent.OnItemClick -> {
                 _uiState.update { currentState ->
+                    // Update the board with the new gobblet
                     val newBoardGobblets = currentState.boardGobblets.toMutableList()
-
                     newBoardGobblets[event.index] = GobbletBoardItem(
                         tier = event.tier,
                         player = currentState.currentPlayer
                     )
 
+                    // Remove the piece from the player's inventory, if it's their turn
+                    val player1Items = if (currentState.isPlayer1Turn) {
+                        currentState.player1Items - event.tier
+                    } else {
+                        currentState.player1Items
+                    }
+
+                    val player2Items = if (currentState.isPlayer2Turn) {
+                        currentState.player2Items - event.tier
+                    } else {
+                        currentState.player2Items
+                    }
+
                     currentState.copy(
                         boardGobblets = newBoardGobblets,
-                        currentPlayer = currentState.currentPlayer.next()
+                        currentPlayer = currentState.currentPlayer.next(),
+                        player1Items = player1Items,
+                        player2Items = player2Items
                     )
                 }
             }
             is GameScreenUiEvent.OnResetClick -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        boardGobblets = emptyBoardList(currentState.boardSize)
-                    )
+                viewModelScope.launch {
+                    _uiState.emit(GameScreenUiState())
                 }
             }
         }

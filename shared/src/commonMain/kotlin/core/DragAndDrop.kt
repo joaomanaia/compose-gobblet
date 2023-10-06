@@ -111,21 +111,23 @@ fun <T> DropTarget(
     val dragInfo = LocalDragTargetInfo.current
     val dragPosition = dragInfo.dragPosition
     val dragOffset = dragInfo.dragOffset
-    var isCurrentDropTarget by remember {
-        mutableStateOf(false)
-    }
+    val isDragging = dragInfo.isDragging
+
+    var isCurrentDropTarget by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier.onGloballyPositioned {
             it.boundsInWindow().let { rect ->
-                isCurrentDropTarget = rect.contains(dragPosition + dragOffset)
+                isCurrentDropTarget = isDragging && rect.contains(dragPosition + dragOffset)
             }
         }
     ) {
-        content(isCurrentDropTarget, dragInfo.dataToDrop as T?)
+        val data = dragInfo.dataToDrop as T?
+        content(isCurrentDropTarget, data)
 
-        val data = if (isCurrentDropTarget && !dragInfo.isDragging) dragInfo.dataToDrop as T? else null
-        if (data != null) onDroppedOnTarget(data)
+        if (isCurrentDropTarget && !dragInfo.isDragging) {
+            data?.let { onDroppedOnTarget(it) }
+        }
     }
 }
 

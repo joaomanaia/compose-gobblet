@@ -25,7 +25,7 @@ internal fun TierRowItems(
     player: Player,
     enabled: Boolean = true,
 ) {
-    val groupedItems by remember {
+    val groupedItems by remember(items) {
         derivedStateOf {
             items.groupBy { it }
         }
@@ -50,6 +50,13 @@ internal fun TierRowItems(
                 .padding(MaterialTheme.spacing.medium)
                 .fillMaxWidth()
         ) {
+            if (items.isEmpty()) {
+                Text(
+                    text = "No More Pieces",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
             groupedItems.forEach { item ->
                 BadgedBox(
                     modifier = Modifier,

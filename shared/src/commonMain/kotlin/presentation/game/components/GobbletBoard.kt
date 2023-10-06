@@ -54,6 +54,8 @@ internal fun GobbletBoard(
                             .weight(1f)
                             .fillMaxHeight(),
                         onDroppedOnTarget = { droppedTier ->
+                            println("Dropped on target: $droppedTier")
+
                             val canBeStacked = droppedTier canBeStackedOn item?.tier
                             if (!canBeStacked) return@DropTarget
 
