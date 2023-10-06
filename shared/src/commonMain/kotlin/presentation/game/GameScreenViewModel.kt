@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import model.GobbletBoardItem
 
 class GameScreenViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(GameScreenUiState())
@@ -15,13 +14,6 @@ class GameScreenViewModel : ViewModel() {
         when (event) {
             is GameScreenUiEvent.OnItemClick -> {
                 _uiState.update { currentState ->
-                    // Update the board with the new gobblet
-                    val newBoardGobblets = currentState.boardGobblets.toMutableList()
-                    newBoardGobblets[event.index] = GobbletBoardItem(
-                        tier = event.tier,
-                        player = currentState.currentPlayer
-                    )
-
                     // Remove the piece from the player's inventory, if it's their turn
                     val player1Items = if (currentState.isPlayer1Turn) {
                         currentState.player1Items - event.tier
@@ -36,7 +28,11 @@ class GameScreenViewModel : ViewModel() {
                     }
 
                     currentState.copy(
-                        boardGobblets = newBoardGobblets,
+                        board = currentState.board.insertGobbletAt(
+                            index = event.index,
+                            tier = event.tier,
+                            player = currentState.currentPlayer
+                        ),
                         currentPlayer = currentState.currentPlayer.next(),
                         player1Items = player1Items,
                         player2Items = player2Items

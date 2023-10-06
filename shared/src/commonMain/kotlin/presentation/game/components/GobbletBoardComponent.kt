@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 @Composable
-internal fun GobbletBoard(
+internal fun GobbletBoardComponent(
     modifier: Modifier = Modifier,
     boardGobblets: List<GobbletBoardItem?> = emptyList(),
     onItemDrop: (
@@ -54,8 +54,6 @@ internal fun GobbletBoard(
                             .weight(1f)
                             .fillMaxHeight(),
                         onDroppedOnTarget = { droppedTier ->
-                            println("Dropped on target: $droppedTier")
-
                             val canBeStacked = droppedTier canBeStackedOn item?.tier
                             if (!canBeStacked) return@DropTarget
 
@@ -73,7 +71,7 @@ internal fun GobbletBoard(
                         Surface(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(1.dp),
+                                .padding(2.dp),
                             tonalElevation = if (isInBound) 2.dp else 0.dp,
                             color = surfaceColor
                         ) {
@@ -119,7 +117,7 @@ private fun EmptyComponent(
 private fun Modifier.drawBackgroundGrid(
     gridSize: Int = 3,
     gridColor: Color,
-    strokeWidth: Float = 2f,
+    strokeWidth: Dp = 3.dp
 ) = drawBehind {
     // Draw the horizontal lines
     for (i in 1 until gridSize) {
@@ -127,7 +125,7 @@ private fun Modifier.drawBackgroundGrid(
             color = gridColor,
             start = Offset(0f, size.height * i / gridSize),
             end = Offset(size.width, size.height * i / gridSize),
-            strokeWidth = strokeWidth,
+            strokeWidth = strokeWidth.toPx(),
         )
     }
 
@@ -137,7 +135,7 @@ private fun Modifier.drawBackgroundGrid(
             color = gridColor,
             start = Offset(size.width * i / gridSize, 0f),
             end = Offset(size.width * i / gridSize, size.height),
-            strokeWidth = strokeWidth,
+            strokeWidth = strokeWidth.toPx(),
         )
     }
 }

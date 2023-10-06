@@ -5,9 +5,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import core.presentation.theme.GobbletTheme
-import model.GobbletBoardItem
-import model.GobbletTier
-import model.Player
+import model.GobbletBoard
 import presentation.game.GameScreen
 import presentation.game.GameScreenUiState
 
@@ -19,12 +17,7 @@ private fun GameScreenPreview() {
         Surface {
             GameScreen(
                 uiState = GameScreenUiState(
-                    boardGobblets = List(9) {
-                        GobbletBoardItem(
-                            tier = GobbletTier.allTiers.random(),
-                            player = Player.entries.random()
-                        )
-                    }
+                    board = GobbletBoard.randomBoard()
                 ),
                 onEvent = {}
             )

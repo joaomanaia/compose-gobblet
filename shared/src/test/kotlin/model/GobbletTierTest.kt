@@ -3,6 +3,8 @@ package model
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
+import assertk.assertions.isTrue
 import core.icons.GobbletTierIcons
 import core.icons.gobblettiericons.Tier1
 import core.icons.gobblettiericons.Tier2
@@ -38,7 +40,7 @@ internal class GobbletTierTest {
 
     @Test
     fun `test compare tiers`() {
-        assertThat(GobbletTier.TIER_1 < GobbletTier.TIER_2).isEqualTo(true)
+        assertThat(GobbletTier.TIER_1 < GobbletTier.TIER_2).isTrue()
         assertThat(GobbletTier.TIER_1 < GobbletTier.TIER_3).isEqualTo(true)
         assertThat(GobbletTier.TIER_2 < GobbletTier.TIER_3).isEqualTo(true)
 
@@ -54,23 +56,23 @@ internal class GobbletTierTest {
     @Test
     fun `test canBeStackedOn`() {
         // Tier 1 gobblets cannot be stacked on any other gobblet
-        assertThat(GobbletTier.TIER_1 canBeStackedOn GobbletTier.TIER_1).isEqualTo(false)
-        assertThat(GobbletTier.TIER_1 canBeStackedOn GobbletTier.TIER_2).isEqualTo(false)
-        assertThat(GobbletTier.TIER_1 canBeStackedOn GobbletTier.TIER_3).isEqualTo(false)
+        assertThat(GobbletTier.TIER_1 canBeStackedOn GobbletTier.TIER_1).isFalse()
+        assertThat(GobbletTier.TIER_1 canBeStackedOn GobbletTier.TIER_2).isFalse()
+        assertThat(GobbletTier.TIER_1 canBeStackedOn GobbletTier.TIER_3).isFalse()
 
         // Tier 2 gobblets can only be stacked on tier 1 gobblets
-        assertThat(GobbletTier.TIER_2 canBeStackedOn GobbletTier.TIER_1).isEqualTo(true)
-        assertThat(GobbletTier.TIER_2 canBeStackedOn GobbletTier.TIER_2).isEqualTo(false)
-        assertThat(GobbletTier.TIER_2 canBeStackedOn GobbletTier.TIER_3).isEqualTo(false)
+        assertThat(GobbletTier.TIER_2 canBeStackedOn GobbletTier.TIER_1).isTrue()
+        assertThat(GobbletTier.TIER_2 canBeStackedOn GobbletTier.TIER_2).isFalse()
+        assertThat(GobbletTier.TIER_2 canBeStackedOn GobbletTier.TIER_3).isFalse()
 
         // Tier 3 gobblets can be stacked on tier 1 and tier 2 gobblets
-        assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_1).isEqualTo(true)
-        assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_2).isEqualTo(true)
-        assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_3).isEqualTo(false)
+        assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_1).isTrue()
+        assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_2).isTrue()
+        assertThat(GobbletTier.TIER_3 canBeStackedOn GobbletTier.TIER_3).isFalse()
 
         // If tierToStack is null, then any tier can be stacked on it
-        assertThat(GobbletTier.TIER_1 canBeStackedOn null).isEqualTo(true)
-        assertThat(GobbletTier.TIER_2 canBeStackedOn null).isEqualTo(true)
-        assertThat(GobbletTier.TIER_3 canBeStackedOn null).isEqualTo(true)
+        assertThat(GobbletTier.TIER_1 canBeStackedOn null).isTrue()
+        assertThat(GobbletTier.TIER_2 canBeStackedOn null).isTrue()
+        assertThat(GobbletTier.TIER_3 canBeStackedOn null).isTrue()
     }
 }

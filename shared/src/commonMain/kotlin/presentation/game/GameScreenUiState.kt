@@ -1,16 +1,15 @@
 package presentation.game
 
 import core.utils.kotlin.times
-import model.GobbletBoardItem
+import model.GobbletBoard
 import model.GobbletTier
 import model.Player
 
 data class GameScreenUiState(
-    val boardSize: Int = 3,
-    val boardGobblets: List<GobbletBoardItem?> = emptyBoardList(boardSize),
+    val board: GobbletBoard = GobbletBoard.empty(),
     val currentPlayer: Player = Player.PLAYER_1,
-    val player1Items: List<GobbletTier> = defaultPlayerItems(boardSize),
-    val player2Items: List<GobbletTier> = defaultPlayerItems(boardSize),
+    val player1Items: List<GobbletTier> = defaultPlayerItems(),
+    val player2Items: List<GobbletTier> = defaultPlayerItems(),
 ) {
     val isPlayer1Turn: Boolean
         get() = currentPlayer == Player.PLAYER_1
@@ -19,11 +18,7 @@ data class GameScreenUiState(
         get() = currentPlayer == Player.PLAYER_2
 }
 
-internal fun emptyBoardList(boardSize: Int): List<GobbletBoardItem?> {
-    return List(boardSize * boardSize) { null }
-}
-
-internal fun defaultPlayerItems(boardSize: Int): List<GobbletTier> {
+internal fun defaultPlayerItems(boardSize: Int = 3): List<GobbletTier> {
     val allItems = GobbletTier.allTiers * boardSize
 
     return allItems.sorted()

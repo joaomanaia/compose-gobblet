@@ -11,11 +11,11 @@ import core.presentation.theme.GobbletTheme
 import model.GobbletBoardItem
 import model.GobbletTier
 import model.Player
-import presentation.game.components.GobbletBoard
+import presentation.game.components.GobbletBoardComponent
 
 @Preview
 @Composable
-private fun GobbletBoardPreview() {
+private fun GobbletBoardComponentPreview() {
     val randomBoardGobblets = List(9) {
         GobbletBoardItem(
             tier = GobbletTier.allTiers.random(),
@@ -25,7 +25,7 @@ private fun GobbletBoardPreview() {
 
     GobbletTheme {
         Surface {
-            GobbletBoard(
+            GobbletBoardComponent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
