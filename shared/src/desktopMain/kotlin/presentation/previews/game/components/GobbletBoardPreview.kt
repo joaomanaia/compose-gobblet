@@ -18,7 +18,7 @@ import presentation.game.components.GobbletBoard
 private fun GobbletBoardPreview() {
     val randomBoardGobblets = List(9) {
         GobbletBoardItem(
-            tier = GobbletTier.entries.random(),
+            tier = GobbletTier.allTiers.random(),
             player = Player.entries.random(),
         )
     }

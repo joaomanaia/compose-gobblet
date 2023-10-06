@@ -33,6 +33,22 @@ kotlin {
                 implementation(libs.koin.compose)
             }
         }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+
+                implementation(libs.junit.jupiter.params)
+
+                implementation(libs.assertk)
+
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.mockk)
+            }
+        }
+
         val androidMain by getting {
             dependencies {
                 api(libs.androidx.activity.compose)
@@ -43,6 +59,7 @@ kotlin {
                 implementation(libs.koin.android)
             }
         }
+
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.common)
@@ -50,6 +67,10 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 android {

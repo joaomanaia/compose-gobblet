@@ -7,13 +7,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import core.icons.GobbletTierIcons
-import core.icons.gobblettiericons.Tier1
-import core.icons.gobblettiericons.Tier2
-import core.icons.gobblettiericons.Tier3
 import model.GobbletTier
 import model.Player
 
@@ -53,16 +48,10 @@ internal fun GobbletComponent(
                     .fillMaxSize()
                     .padding(size / ICON_PADDING_DIVISOR), // Makes a responsive icon size
                 contentDescription = null,
-                imageVector = tier.getIcon()
+                imageVector = tier.icon
             )
         }
     }
-}
-
-private fun GobbletTier.getIcon(): ImageVector = when (this) {
-    GobbletTier.TIER_1 -> GobbletTierIcons.Tier1
-    GobbletTier.TIER_2 -> GobbletTierIcons.Tier2
-    GobbletTier.TIER_3 -> GobbletTierIcons.Tier3
 }
 
 private val DEFAULT_TIER_SIZE = 64.dp

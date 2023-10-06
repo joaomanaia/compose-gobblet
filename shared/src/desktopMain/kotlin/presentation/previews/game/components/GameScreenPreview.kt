@@ -21,7 +21,7 @@ private fun GameScreenPreview() {
                 uiState = GameScreenUiState(
                     boardGobblets = List(9) {
                         GobbletBoardItem(
-                            tier = GobbletTier.entries.random(),
+                            tier = GobbletTier.allTiers.random(),
                             player = Player.entries.random()
                         )
                     }

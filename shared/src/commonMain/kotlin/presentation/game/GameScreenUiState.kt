@@ -18,7 +18,7 @@ internal fun emptyBoardList(boardSize: Int): List<GobbletBoardItem?> {
 }
 
 internal fun defaultPlayerItems(boardSize: Int): List<GobbletTier> {
-    val allItems = GobbletTier.entries * boardSize
+    val allItems = GobbletTier.allTiers * boardSize
 
     return allItems.sorted()
 }

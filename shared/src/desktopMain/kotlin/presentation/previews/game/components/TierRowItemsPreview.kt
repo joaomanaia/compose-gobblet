@@ -23,12 +23,12 @@ private fun TierRowItemsPreview() {
                 modifier = Modifier.padding(16.dp)
             ) {
                 TierRowItems(
-                    items = GobbletTier.entries,
+                    items = GobbletTier.allTiers,
                     player = Player.PLAYER_1
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 TierRowItems(
-                    items = GobbletTier.entries,
+                    items = GobbletTier.allTiers,
                     player = Player.PLAYER_2
                 )
             }

@@ -1,15 +1,18 @@
 [versions]
 
+assertk = "0.27.0"
 koin-core = "3.5.0"
 koin-compose = "1.1.0"
 kotlin = "1.9.10"
 android-gradle-plugin = "8.0.2"
-compose = "1.5.2"
+compose = "1.5.3"
 kotlin-coroutines = "1.7.3"
 androidx-activity-compose = "1.8.0"
 androidx-appcompat-appcompat = "1.6.1"
 androidx-core-ktx = "1.12.0"
+mockk = "1.12.5"
 moko = "0.16.1"
+junitJupiter = "5.9.3"
 
 android-compileSdk = "34"
 android-targetSdk = "34"
@@ -20,11 +23,14 @@ android-minSdk = "21"
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-appcompat-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat-appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
+assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-core" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
-
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitJupiter" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 moko-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "moko" }
 moko-mvvm-compose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "moko" }
 moko-mvvm-flow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "moko" }

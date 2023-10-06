@@ -24,7 +24,7 @@ private fun GobbletComponentPreview() {
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(16.dp)
             ) {
-                GobbletTier.entries.forEach { tier ->
+                GobbletTier.allTiers.forEach { tier ->
                     Player.entries.forEach { player ->
                         GobbletComponent(
                             tier = tier,
