@@ -102,7 +102,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: APKs
-          path: app/build/outputs/apk/**/androidApp-debug.apk
+          path: androidApp/build/outputs/apk/**/androidApp-debug.apk
 
   package-desktop:
     name: "📦 Package Desktop"
@@ -111,7 +111,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
       - name: Checkout sources
