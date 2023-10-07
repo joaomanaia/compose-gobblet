@@ -22,9 +22,17 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "Gobblet"
             packageVersion = "1.0.0"
+
+            buildTypes {
+                release {
+                    proguard {
+                        configurationFiles.from("compose-desktop.pro")
+                    }
+                }
+            }
         }
     }
 }
