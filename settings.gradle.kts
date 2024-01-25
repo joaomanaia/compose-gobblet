@@ -1,8 +1,5 @@
 rootProject.name = "Gobblet"
-
-include(":androidApp")
-include(":shared")
-include(":desktopApp")
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
@@ -13,10 +10,6 @@ pluginManagement {
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version("0.4.0")
-}
-
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
@@ -24,3 +17,5 @@ dependencyResolutionManagement {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
+
+include(":composeApp")
