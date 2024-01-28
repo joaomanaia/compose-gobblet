@@ -1,6 +1,8 @@
 package presentation.game.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,16 +24,16 @@ internal fun GobbletComponent(
 ) {
     val backgroundColor = when (player) {
         Player.PLAYER_1 -> MaterialTheme.colorScheme.primaryContainer
-        Player.PLAYER_2 -> MaterialTheme.colorScheme.secondaryContainer
+        Player.PLAYER_2 -> MaterialTheme.colorScheme.tertiaryContainer
     }.copy(
-        alpha = if (enabled) 1f else 0.1f
+        alpha = if (enabled) 1f else DISABLED_ALPHA
     )
 
     val contentColor = when (player) {
         Player.PLAYER_1 -> MaterialTheme.colorScheme.onPrimaryContainer
-        Player.PLAYER_2 -> MaterialTheme.colorScheme.onSecondaryContainer
+        Player.PLAYER_2 -> MaterialTheme.colorScheme.onTertiaryContainer
     }.copy(
-        alpha = if (enabled) 1f else 0.1f
+        alpha = if (enabled) 1f else DISABLED_ALPHA
     )
 
     Surface(
@@ -63,3 +65,5 @@ private val DEFAULT_TIER_SIZE = 64.dp
 
 private const val BORDER_PADDING_DIVISOR = 16f
 private const val ICON_PADDING_DIVISOR = 5f
+
+private const val DISABLED_ALPHA = 0.1f

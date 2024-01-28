@@ -26,11 +26,15 @@ internal fun GobbletBoardComponent(
         tier: GobbletTier
     ) -> Unit = { _, _ -> }
 ) {
-    val boardSize = sqrt(boardGobblets.size.toDouble()).roundToInt()
-
     val gridColor = MaterialTheme.colorScheme.surfaceVariant
 
-    val board2d = boardGobblets.chunked(boardSize)
+    val boardSize = remember(boardGobblets) {
+        sqrt(boardGobblets.size.toDouble()).roundToInt()
+    }
+
+    val board2d = remember(boardGobblets, boardSize) {
+        boardGobblets.chunked(boardSize)
+    }
 
     Column(
         modifier = modifier
@@ -115,26 +119,30 @@ private fun EmptyComponent(
 }
 
 private fun Modifier.drawBackgroundGrid(
-    gridSize: Int = 3,
     gridColor: Color,
+    gridSize: Int = 3,
     strokeWidth: Dp = 3.dp
 ) = drawBehind {
     // Draw the horizontal lines
     for (i in 1 until gridSize) {
+        val y = size.height * i / gridSize
+
         drawLine(
             color = gridColor,
-            start = Offset(0f, size.height * i / gridSize),
-            end = Offset(size.width, size.height * i / gridSize),
+            start = Offset(x = 0f, y = y),
+            end = Offset(x = size.width, y = y),
             strokeWidth = strokeWidth.toPx(),
         )
     }
 
     // Draw the vertical lines
     for (i in 1 until gridSize) {
+        val x = size.width * i / gridSize
+
         drawLine(
             color = gridColor,
-            start = Offset(size.width * i / gridSize, 0f),
-            end = Offset(size.width * i / gridSize, size.height),
+            start = Offset(x = x, y = 0f),
+            end = Offset(x = x, y = size.height),
             strokeWidth = strokeWidth.toPx(),
         )
     }
