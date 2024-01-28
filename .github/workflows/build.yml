@@ -73,7 +73,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.5.1
 
       - name: Lint sources
-        run: ./gradlew androidApp:lint --stacktrace
+        run: ./gradlew composeApp:lint --stacktrace
 
       - name: Generate GitHub annotations
         uses: yutailang0119/action-android-lint@v3
@@ -101,7 +101,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.5.1
 
       - name: Assemble debug APKs
-        run: ./gradlew androidApp:assembleDebug --stacktrace
+        run: ./gradlew composeApp:assembleDebug --stacktrace
 
       - name: Upload APKs
         uses: actions/upload-artifact@v3
