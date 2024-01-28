@@ -38,6 +38,7 @@ kotlin {
 
             implementation(libs.kotlinx.coroutines.android)
 
+            implementation(libs.koin.android)
             implementation(libs.koin.compose)
         }
 
