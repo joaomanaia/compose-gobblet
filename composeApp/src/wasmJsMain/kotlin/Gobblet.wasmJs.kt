@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.CanvasBasedWindow
 import core.presentation.theme.GobbletTheme
 import di.gameModule
 import kotlinx.coroutines.CoroutineScope
@@ -30,16 +29,14 @@ fun GobbletWasmJs() {
 
     val gameScreenViewModel: GameScreenViewModel by koinApp.koin.inject()
 
-    CanvasBasedWindow(canvasElementId = "ComposeTarget") {
-        GobbletTheme {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                GameScreen(
-                    viewModel = gameScreenViewModel
-                )
-            }
+    GobbletTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            GameScreen(
+                viewModel = gameScreenViewModel
+            )
         }
     }
 }
