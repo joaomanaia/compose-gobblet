@@ -1,18 +1,21 @@
+*.iml
 .gradle
-/local.properties
+**/build/
+xcuserdata
+!src/**/build/
+local.properties
+.idea
 .DS_Store
-build/
-/captures
+captures
 .externalNativeBuild
 .cxx
-iosApp/Podfile.lock
-iosApp/Pods/*
-iosApp/iosApp.xcworkspace/*
-iosApp/iosApp.xcodeproj/*
-!iosApp/iosApp.xcodeproj/project.pbxproj
-shared/shared.podspec
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
 
-*.iml
 .idea/*
 !.idea/copyright
 # Keep the code styles.
@@ -21,3 +24,5 @@ shared/shared.podspec
 !/.idea/codeStyles/Project.xml
 !/.idea/codeStyles/codeStyleConfig.xml
 !.idea/runConfigurations/
+
+kotlin-js-store

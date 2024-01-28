@@ -14,7 +14,12 @@ on:
 permissions:
   contents: read
   checks: write
+  pages: write
   id-token: write
+
+concurrency:
+  group: "build"
+  cancel-in-progress: false
 
 env:
   JAVA_VERSION: "17"
@@ -111,7 +116,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
 
     steps:
       - name: Checkout sources
@@ -134,3 +139,46 @@ jobs:
         with:
           name: Desktop
           path: desktopApp/build/compose/binaries/main/**/*
+
+  package-web:
+    name: "📦 Build and Deploy Web"
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ env.JAVA_DISTR }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v2.5.1
+
+      - name: Build Web
+        run: ./gradlew wasmJsBrowserDistribution --stacktrace
+
+      - name: Upload Web artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./composeApp/build/dist/wasmJs/productionExecutable/
+
+  deploy-web:
+    name: "🚀 Deploy Web"
+    runs-on: ubuntu-latest
+    environment:
+      name: gh-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs:
+      - package-web
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
