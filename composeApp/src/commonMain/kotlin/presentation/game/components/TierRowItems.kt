@@ -1,10 +1,16 @@
 package presentation.game.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgeDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -17,12 +23,13 @@ import model.GobbletTier
 import model.Player
 import core.DragTarget
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@ExperimentalMaterial3Api
 internal fun TierRowItems(
     modifier: Modifier = Modifier,
     items: List<GobbletTier>,
     player: Player,
+    rowLayout: Boolean,
     enabled: Boolean = true,
 ) {
     val groupedItems by remember(items) {
@@ -43,12 +50,9 @@ internal fun TierRowItems(
         tonalElevation = 8.dp,
         color = surfaceColor
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(MaterialTheme.spacing.medium)
-                .fillMaxWidth()
+        TierItemsContainer(
+            modifier = Modifier.padding(MaterialTheme.spacing.medium),
+            rowLayout = rowLayout
         ) {
             if (items.isEmpty()) {
                 Text(
@@ -85,6 +89,31 @@ internal fun TierRowItems(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TierItemsContainer(
+    modifier: Modifier = Modifier,
+    rowLayout: Boolean,
+    content: @Composable () -> Unit
+) {
+    if (rowLayout) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = modifier
+        ) {
+            content()
+        }
+    } else {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+        ) {
+            content()
         }
     }
 }

@@ -4,6 +4,10 @@ import kotlin.jvm.JvmInline
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
+typealias Winner = Pair<Player, Line>
+
+typealias Line = List<Int>
+
 @JvmInline
 value class GobbletBoard private constructor(
     val gobblets: List<GobbletBoardItem?>
@@ -11,14 +15,14 @@ value class GobbletBoard private constructor(
     val boardSize: Int
         get() = sqrt(gobblets.size.toDouble()).roundToInt()
 
-    val winner: Player?
+    val winner: Winner?
         get() {
             for (winnerLine in board3x3WinPositions) {
                 // If all the gobblets in the line are the same, then we have a winner
                 val gobblet = getGobbletAt(winnerLine.first())
 
                 if (gobblet != null && winnerLine.all { getGobbletAt(it)?.player == gobblet.player }) {
-                    return gobblet.player
+                    return gobblet.player to winnerLine
                 }
             }
 

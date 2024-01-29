@@ -47,11 +47,15 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
-            implementation(compose.components.resources)
+            // implementation(compose.components.resources)
 
             implementation(libs.kotlinx.coroutines.core)
 
             implementation(libs.koin.core)
+
+            implementation(libs.material3.windowSizeClass.multiplatform)
+
+            implementation("tech.annexflow.compose:constraintlayout-compose-multiplatform:0.3.0-alpha01")
         }
 
         desktopMain.dependencies {
