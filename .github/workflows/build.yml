@@ -138,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Desktop
-          path: desktopApp/build/compose/binaries/main/**/*
+          path: composeApp/build/compose/binaries/main/**/*
 
   package-web:
     name: "📦 Build and Deploy Web"
