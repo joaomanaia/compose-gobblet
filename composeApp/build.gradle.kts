@@ -1,6 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.psi.packageDirectiveVisitor
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -105,7 +104,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "me.joaomanaia.gobblet"
+            packageName = "Gobblet"
             packageVersion = "1.0.0"
 
             buildTypes.release {
