@@ -3,6 +3,7 @@ package model
 import kotlin.jvm.JvmInline
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 typealias Winner = Pair<Player, Line>
 
@@ -64,12 +65,15 @@ value class GobbletBoard private constructor(
         /**
          * Creates a random board with random gobblets for testing purposes.
          */
-        internal fun randomBoard(): GobbletBoard {
+        internal fun randomBoard(
+            boardSize: Int = 3,
+            random: Random = Random.Default
+        ): GobbletBoard {
             return GobbletBoard(
-                gobblets = List(9) {
+                gobblets = List(boardSize * boardSize) {
                     GobbletBoardItem(
-                        tier = GobbletTier.allTiers.random(),
-                        player = Player.entries.random()
+                        tier = GobbletTier.allTiers.random(random),
+                        player = Player.entries.random(random)
                     )
                 }
             )

@@ -7,13 +7,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import model.GobbletBoardItem
 import model.GobbletTier
 import core.DropTarget
+import model.Player
+import model.Winner
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -21,6 +25,7 @@ import kotlin.math.sqrt
 internal fun GobbletBoardComponent(
     modifier: Modifier = Modifier,
     boardGobblets: List<GobbletBoardItem?> = emptyList(),
+    winner: Winner? = null,
     onItemDrop: (
         index: Int,
         tier: GobbletTier
@@ -42,6 +47,17 @@ internal fun GobbletBoardComponent(
             .drawBackgroundGrid(
                 gridSize = boardSize,
                 gridColor = gridColor,
+            ).then(
+                if (winner != null) {
+                    Modifier.drawWinnerLine(
+                        winner = winner,
+                        color = if (winner.first == Player.PLAYER_1) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.tertiary
+                        }
+                    )
+                } else Modifier
             ),
         verticalArrangement = Arrangement.SpaceAround,
     ) {
@@ -147,3 +163,39 @@ private fun Modifier.drawBackgroundGrid(
         )
     }
 }
+
+private fun Modifier.drawWinnerLine(
+    winner: Winner,
+    color: Color,
+    gridSize: Int = 3,
+) = drawWithContent {
+    drawContent()
+
+    val winnerLine = winner.second
+
+    val squareHeight = size.height / gridSize
+    val squareMiddleHeight = squareHeight / 2
+
+    val squareWidth = size.width / gridSize
+    val squareMiddleWidth = squareWidth / 2
+
+    val startOffset = Offset(
+        x = squareWidth * (winnerLine.first() % gridSize) + squareMiddleWidth,
+        y = squareHeight * (winnerLine.first() / gridSize) + squareMiddleHeight
+    )
+
+    val endOffset = Offset(
+        x = squareWidth * (winnerLine.last() % gridSize) + squareMiddleWidth,
+        y = squareHeight * (winnerLine.last() / gridSize) + squareMiddleHeight
+    )
+
+    drawLine(
+        color = color,
+        start = startOffset,
+        end = endOffset,
+        strokeWidth = LINE_STROKE_WIDTH.toPx(),
+        cap = StrokeCap.Round
+    )
+}
+
+private val LINE_STROKE_WIDTH = 26.dp
