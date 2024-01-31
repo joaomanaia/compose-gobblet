@@ -7,12 +7,14 @@ import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import core.presentation.theme.spacing
 import model.Player
 import presentation.game.components.TierRowItems
 import core.LongPressDraggable
+import core.presentation.theme.TierColors
 import presentation.game.components.GobbletBoardComponent
 
 @Composable
@@ -35,6 +37,7 @@ fun GameScreen(
 private fun GameScreen(
     windowSizeClass: WindowSizeClass,
     uiState: GameScreenUiState,
+    tierColors: TierColors = TierColors.defaultTierColors(),
     onEvent: (event: GameScreenUiEvent) -> Unit
 ) {
     val mediumSpacing = MaterialTheme.spacing.medium
@@ -101,6 +104,7 @@ private fun GameScreen(
                         rowLayout = rowLayout,
                         winner = winner,
                         enabled = uiState.isPlayer1Turn && !uiState.board.isGameEnded,
+                        tierColors = tierColors,
                         onPlayAgainClick = { onEvent(GameScreenUiEvent.OnResetClick) }
                     )
                 }
@@ -145,8 +149,10 @@ private fun GameScreen(
                             height = Dimension.fillToConstraints
                         }
                     },
+                    currentPlayer = uiState.currentPlayer,
                     boardGobblets = uiState.board.gobblets,
                     winner = winner,
+                    tierColors = tierColors,
                     onItemDrop = { index, tier ->
                         onEvent(GameScreenUiEvent.OnItemClick(index, tier))
                     }
@@ -174,6 +180,7 @@ private fun GameScreen(
                         rowLayout = rowLayout,
                         winner = winner,
                         enabled = uiState.isPlayer2Turn && !uiState.board.isGameEnded,
+                        tierColors = tierColors,
                         onPlayAgainClick = { onEvent(GameScreenUiEvent.OnResetClick) }
                     )
                 }

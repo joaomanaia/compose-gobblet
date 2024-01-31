@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import model.GobbletBoardItem
 import model.GobbletTier
 import core.DropTarget
+import core.presentation.theme.TierColors
 import model.Player
 import model.Winner
 import kotlin.math.roundToInt
@@ -26,13 +27,16 @@ internal fun GobbletBoardComponent(
     modifier: Modifier = Modifier,
     boardGobblets: List<GobbletBoardItem?> = emptyList(),
     winner: Winner? = null,
+    currentPlayer: Player,
+    tierColors: TierColors = TierColors.defaultTierColors(),
+    colors: BoardColors = BoardDefaults.colors(
+        tierColors = tierColors
+    ),
     onItemDrop: (
         index: Int,
         tier: GobbletTier
     ) -> Unit = { _, _ -> }
 ) {
-    val gridColor = MaterialTheme.colorScheme.surfaceVariant
-
     val boardSize = remember(boardGobblets) {
         sqrt(boardGobblets.size.toDouble()).roundToInt()
     }
@@ -46,16 +50,12 @@ internal fun GobbletBoardComponent(
             .fillMaxSize()
             .drawBackgroundGrid(
                 gridSize = boardSize,
-                gridColor = gridColor,
+                gridColor = colors.gridColor,
             ).then(
                 if (winner != null) {
                     Modifier.drawWinnerLine(
                         winner = winner,
-                        color = if (winner.first == Player.PLAYER_1) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.tertiary
-                        }
+                        color = colors.winnerLineColor(player = winner.first).value,
                     )
                 } else Modifier
             ),
@@ -82,11 +82,11 @@ internal fun GobbletBoardComponent(
                     ) { isInBound, draggingTier ->
                         val canBeStacked = draggingTier != null && draggingTier canBeStackedOn item?.tier
 
-                        val surfaceColor = when {
-                            isInBound && canBeStacked -> MaterialTheme.colorScheme.primary
-                            isInBound && !canBeStacked -> MaterialTheme.colorScheme.error
-                            else -> MaterialTheme.colorScheme.surface
-                        }
+                        val surfaceColor = colors.surfaceColor(
+                            isInBound = isInBound,
+                            canBeStacked = canBeStacked,
+                            player = currentPlayer
+                        ).value
 
                         Surface(
                             modifier = Modifier
@@ -111,7 +111,10 @@ internal fun GobbletBoardComponent(
                                             .padding(16.dp)
                                             .fillMaxSize(),
                                         tier = item.tier,
-                                        player = item.player
+                                        player = item.player,
+                                        colors = GobbletComponentDefaults.colors(
+                                            tierColors = tierColors
+                                        )
                                     )
                                 }
                             }
@@ -199,3 +202,56 @@ private fun Modifier.drawWinnerLine(
 }
 
 private val LINE_STROKE_WIDTH = 26.dp
+
+object BoardDefaults {
+    @Composable
+    fun colors(
+        tierColors: TierColors = TierColors.defaultTierColors(),
+        gridColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+        cantBeStackedSurfaceColor: Color = MaterialTheme.colorScheme.error,
+        normalSurfaceColor: Color = MaterialTheme.colorScheme.surface,
+    ): BoardColors = BoardColors(
+        gridColor = gridColor,
+        player1WinnerLineColor = tierColors.player1Color,
+        player2WinnerLineColor = tierColors.player2Color,
+        player1CanBeStackedSurfaceColor = tierColors.player1ContainerColor.copy(alpha = 0.28f),
+        player2CanBeStackedSurfaceColor = tierColors.player2ContainerColor.copy(alpha = 0.28f),
+        cantBeStackedSurfaceColor = cantBeStackedSurfaceColor,
+        normalSurfaceColor = normalSurfaceColor,
+    )
+}
+
+@Immutable
+class BoardColors internal constructor(
+    val gridColor: Color,
+    val player1WinnerLineColor: Color,
+    val player2WinnerLineColor: Color,
+    val player1CanBeStackedSurfaceColor: Color,
+    val player2CanBeStackedSurfaceColor: Color,
+    val cantBeStackedSurfaceColor: Color,
+    val normalSurfaceColor: Color,
+) {
+    @Composable
+    fun winnerLineColor(
+        player: Player
+    ): State<Color> = rememberUpdatedState(
+        newValue = when (player) {
+            Player.PLAYER_1 -> player1WinnerLineColor
+            Player.PLAYER_2 -> player2WinnerLineColor
+        }
+    )
+
+    @Composable
+    fun surfaceColor(
+        isInBound: Boolean,
+        canBeStacked: Boolean,
+        player: Player
+    ): State<Color> = rememberUpdatedState(
+        newValue = when {
+            isInBound && canBeStacked && player == Player.PLAYER_1 -> player1CanBeStackedSurfaceColor
+            isInBound && canBeStacked && player == Player.PLAYER_2 -> player2CanBeStackedSurfaceColor
+            isInBound && !canBeStacked -> cantBeStackedSurfaceColor
+            else -> normalSurfaceColor
+        }
+    )
+}

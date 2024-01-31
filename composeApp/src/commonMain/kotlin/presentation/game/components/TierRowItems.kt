@@ -13,17 +13,17 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgeDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import core.presentation.theme.spacing
 import model.GobbletTier
 import model.Player
 import core.DragTarget
+import core.presentation.theme.TierColors
 import model.Winner
 
 @Composable
@@ -35,6 +35,11 @@ internal fun TierRowItems(
     rowLayout: Boolean,
     winner: Winner? = null,
     enabled: Boolean = true,
+    tierColors: TierColors = TierColors.defaultTierColors(),
+    colors: TierRowItemsColors = TierRowItemsDefaults.colors(
+        tierColors = tierColors
+    ),
+    shape: Shape = TierRowItemsDefaults.shape,
     onPlayAgainClick: () -> Unit = {}
 ) {
     val groupedItems by remember(items) {
@@ -43,26 +48,16 @@ internal fun TierRowItems(
         }
     }
 
-    val surfaceColor = when {
-        winner != null && winner.first == player -> {
-            if (player == Player.PLAYER_1) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.tertiaryContainer
-            }
-        }
+    val surfaceColor = colors.surfaceColor(
+        winner = winner,
+        player = player,
+        enabled = enabled
+    ).value
 
-        enabled -> {
-            MaterialTheme.colorScheme.surface
-        }
-
-        else -> {
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.1f)
-        }
-    }
+    val playAgainButtonColor = colors.playAgainButtonColor(player = player).value
 
     Surface(
-        shape = MaterialTheme.shapes.medium,
+        shape = shape,
         modifier = modifier,
         tonalElevation = 8.dp,
         color = surfaceColor
@@ -72,23 +67,10 @@ internal fun TierRowItems(
             rowLayout = rowLayout
         ) {
             if (winner != null && winner.first == player) {
-                Text(
-                    text = "Winner",
-                    style = MaterialTheme.typography.headlineMedium
+                WinnerContent(
+                    playAgainButtonColor = playAgainButtonColor,
+                    onPlayAgainClick = onPlayAgainClick
                 )
-
-                Button(
-                    onClick = onPlayAgainClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (player == Player.PLAYER_1) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.tertiary
-                        }
-                    ),
-                ) {
-                    Text(text = "Play Again")
-                }
             } else {
                 if (items.isEmpty()) {
                     Text(
@@ -120,13 +102,32 @@ internal fun TierRowItems(
                             GobbletComponent(
                                 tier = item.key,
                                 player = player,
-                                enabled = enabled
+                                enabled = enabled,
+                                colors = GobbletComponentDefaults.colors(tierColors = tierColors)
                             )
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun WinnerContent(
+    playAgainButtonColor: Color,
+    onPlayAgainClick: () -> Unit
+) {
+    Text(
+        text = "Winner",
+        style = MaterialTheme.typography.headlineMedium
+    )
+
+    Button(
+        onClick = onPlayAgainClick,
+        colors = ButtonDefaults.buttonColors(containerColor = playAgainButtonColor),
+    ) {
+        Text(text = "Play Again")
     }
 }
 
@@ -159,4 +160,60 @@ private fun TierItemsContainer(
             content()
         }
     }
+}
+
+object TierRowItemsDefaults {
+    val shape: Shape
+        @Composable
+        get() = MaterialTheme.shapes.medium
+
+    @Composable
+    fun colors(
+        tierColors: TierColors = TierColors.defaultTierColors(),
+        disabledSurfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.28f)
+    ): TierRowItemsColors = TierRowItemsColors(
+        player1SurfaceColor = tierColors.player1ContainerColor.copy(alpha = 0.28f),
+        player2SurfaceColor = tierColors.player2ContainerColor.copy(alpha = 0.28f),
+        player1WinnerSurfaceColor = tierColors.player1ContainerColor,
+        player2WinnerSurfaceColor = tierColors.player2ContainerColor,
+        player1PlayAgainButtonColor = tierColors.player1Color,
+        player2PlayAgainButtonColor = tierColors.player2Color,
+        disabledSurfaceColor = disabledSurfaceColor
+    )
+}
+
+@Immutable
+class TierRowItemsColors internal constructor(
+    val player1SurfaceColor: Color,
+    val player2SurfaceColor: Color,
+    val player1WinnerSurfaceColor: Color,
+    val player2WinnerSurfaceColor: Color,
+    val player1PlayAgainButtonColor: Color,
+    val player2PlayAgainButtonColor: Color,
+    val disabledSurfaceColor: Color,
+) {
+    @Composable
+    fun surfaceColor(
+        winner: Winner?,
+        player: Player,
+        enabled: Boolean
+    ): State<Color> = rememberUpdatedState(
+        newValue = when {
+            winner != null && winner.first == Player.PLAYER_1 -> player1WinnerSurfaceColor
+            winner != null && winner.first == Player.PLAYER_2 -> player2WinnerSurfaceColor
+            enabled && player == Player.PLAYER_1 -> player1SurfaceColor
+            enabled && player == Player.PLAYER_2 -> player2SurfaceColor
+            else -> disabledSurfaceColor
+        }
+    )
+
+    @Composable
+    fun playAgainButtonColor(
+        player: Player
+    ): State<Color> = rememberUpdatedState(
+        newValue = when (player) {
+            Player.PLAYER_1 -> player1PlayAgainButtonColor
+            Player.PLAYER_2 -> player2PlayAgainButtonColor
+        }
+    )
 }
