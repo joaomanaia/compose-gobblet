@@ -6,6 +6,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -99,8 +100,24 @@ internal fun GobbletBoardComponent(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
+                                // Show preview gobblet if dragging tier is not null and can be stacked
+                                val showPreview = draggingTier != null && isInBound && canBeStacked
 
-                                if (item == null) {
+                                if (showPreview) {
+                                    // Add preview gobblet
+                                    GobbletComponent(
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .padding(16.dp)
+                                            .fillMaxSize()
+                                            .alpha(0.5f),
+                                        tier = draggingTier!!,
+                                        player = currentPlayer,
+                                        colors = GobbletComponentDefaults.colors(
+                                            tierColors = tierColors
+                                        )
+                                    )
+                                } else if (item == null) {
                                     EmptyComponent(
                                         modifier = Modifier.fillMaxSize(),
                                     )
