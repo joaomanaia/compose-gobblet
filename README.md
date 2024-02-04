@@ -7,7 +7,7 @@ Currently, it supports Android and Desktop.
 > **Warning**
 > This game is still in development.
 
-<img src="readme_images/gobblet_desktop.png" height="350">
+<img src="readme_images/gobblet_desktop2.png" height="350">
 
 ## Build With
 
