@@ -2,10 +2,12 @@ package presentation.game
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -14,20 +16,24 @@ import model.Player
 import presentation.game.components.TierRowItems
 import core.LongPressDraggable
 import core.presentation.theme.TierColors
+import model.GameResult
+import model.GameType
 import presentation.game.components.GobbletBoardComponent
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 fun GameScreen(
     viewModel: GameScreenViewModel,
-    windowSizeClass: WindowSizeClass = calculateWindowSizeClass()
+    windowSizeClass: WindowSizeClass = calculateWindowSizeClass(),
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     GameScreen(
         windowSizeClass = windowSizeClass,
         uiState = uiState,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick
     )
 }
 
@@ -37,7 +43,8 @@ private fun GameScreen(
     windowSizeClass: WindowSizeClass,
     uiState: GameScreenUiState,
     tierColors: TierColors = TierColors.defaultTierColors(),
-    onEvent: (event: GameScreenUiEvent) -> Unit
+    onEvent: (event: GameScreenUiEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val mediumSpacing = MaterialTheme.spacing.medium
 
@@ -45,18 +52,53 @@ private fun GameScreen(
         windowSizeClass.widthSizeClass > WindowWidthSizeClass.Medium
     }
 
-    val winner = uiState.board.winner
+    val gameState = uiState.gameState
+
+    val gameResult by remember(
+        gameState.board,
+        gameState.isPlayer1Turn,
+        gameState.player1Items,
+        gameState.player2Items,
+        gameState.playedMoves
+    ) {
+        derivedStateOf {
+            val currentPlayerGobblets = if (gameState.isPlayer1Turn) {
+                gameState.player1Items
+            } else {
+                gameState.player2Items
+            }
+
+            gameState.board.getGameResult(
+                currentPlayerGobblets = currentPlayerGobblets,
+                playedMoves = gameState.playedMoves
+            )
+        }
+    }
+
+    val isGameEnded = remember(gameResult) {
+        gameResult != null
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Gobblet") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackClick
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
                 actions = {
                     IconButton(
                         onClick = { onEvent(GameScreenUiEvent.OnResetClick) }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Refresh,
+                            imageVector = Icons.Rounded.Refresh,
                             contentDescription = "Reset"
                         )
                     }
@@ -79,9 +121,13 @@ private fun GameScreen(
                         )
                     ),
             ) {
-                val (player1, player2, board) = createRefs()
+                val (player1, player2, board, tieContent) = createRefs()
 
-                if (winner == null || winner.first == Player.PLAYER_1) {
+                if (gameResult == null || gameResult?.wasWonBy(Player.PLAYER_1) == true) {
+                    val enabled = remember(gameState.isPlayer1Turn, isGameEnded, uiState.gameType) {
+                        gameState.isPlayer1Turn && !isGameEnded
+                    }
+
                     TierRowItems(
                         modifier = Modifier.constrainAs(player1) {
                             if (rowLayout) {
@@ -98,11 +144,11 @@ private fun GameScreen(
                                 width = Dimension.fillToConstraints
                             }
                         },
-                        items = uiState.player1Items,
+                        items = gameState.player1Items,
                         player = Player.PLAYER_1,
                         rowLayout = rowLayout,
-                        winner = winner,
-                        enabled = uiState.isPlayer1Turn && !uiState.board.isGameEnded,
+                        gameResult = gameResult,
+                        enabled = enabled,
                         tierColors = tierColors,
                         onPlayAgainClick = { onEvent(GameScreenUiEvent.OnResetClick) }
                     )
@@ -111,53 +157,75 @@ private fun GameScreen(
                 GobbletBoardComponent(
                     modifier = Modifier.constrainAs(board) {
                         if (rowLayout) {
-                            top.linkTo(parent.top)
+                            if (gameResult is GameResult.Tie) {
+                                top.linkTo(tieContent.bottom, margin = mediumSpacing)
+                            } else {
+                                top.linkTo(parent.top)
+                            }
+
                             bottom.linkTo(parent.bottom)
 
-                            if (winner != null) {
-                                if (winner.first == Player.PLAYER_1) {
+                            when {
+                                gameResult?.wasWonBy(Player.PLAYER_1) == true -> {
                                     start.linkTo(player1.end, margin = mediumSpacing)
                                     end.linkTo(parent.end)
-                                } else {
+                                }
+                                gameResult?.wasWonBy(Player.PLAYER_2) == true -> {
                                     start.linkTo(parent.start)
                                     end.linkTo(player2.start, margin = mediumSpacing)
                                 }
-                            } else {
-                                start.linkTo(player1.end, margin = mediumSpacing)
-                                end.linkTo(player2.start, margin = mediumSpacing)
+                                gameResult is GameResult.Tie -> {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                }
+                                // Ongoing game
+                                else -> {
+                                    start.linkTo(player1.end, margin = mediumSpacing)
+                                    end.linkTo(player2.start, margin = mediumSpacing)
+                                }
                             }
-
-                            width = Dimension.fillToConstraints
                         } else {
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
 
-                            if (winner != null) {
-                                if (winner.first == Player.PLAYER_1) {
+                            when {
+                                gameResult?.wasWonBy(Player.PLAYER_1) == true -> {
                                     top.linkTo(player1.bottom, margin = mediumSpacing)
                                     bottom.linkTo(parent.bottom)
-                                } else {
+                                }
+                                gameResult?.wasWonBy(Player.PLAYER_2) == true -> {
                                     top.linkTo(parent.top)
                                     bottom.linkTo(player2.top, margin = mediumSpacing)
                                 }
-                            } else {
-                                top.linkTo(player1.bottom, margin = mediumSpacing)
-                                bottom.linkTo(player2.top, margin = mediumSpacing)
+                                gameResult is GameResult.Tie -> {
+                                    top.linkTo(tieContent.bottom, margin = mediumSpacing)
+                                    bottom.linkTo(parent.bottom)
+                                }
+                                // Ongoing game
+                                else -> {
+                                    top.linkTo(player1.bottom, margin = mediumSpacing)
+                                    bottom.linkTo(player2.top, margin = mediumSpacing)
+                                }
                             }
-
-                            height = Dimension.fillToConstraints
                         }
+
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
                     },
-                    currentPlayer = uiState.currentPlayer,
-                    boardGobblets = uiState.board.gobblets,
-                    winner = winner,
+                    currentPlayer = gameState.currentPlayer,
+                    boardGobblets = gameState.board.gobblets,
+                    gameResult = gameResult,
                     tierColors = tierColors,
                     onItemDrop = { index, tier ->
                         onEvent(GameScreenUiEvent.OnItemClick(index, tier))
                     }
                 )
 
-                if (winner == null || winner.first == Player.PLAYER_2) {
+                if (gameResult == null || gameResult?.wasWonBy(Player.PLAYER_2) == true) {
+                    val enabled = remember(gameState.isPlayer2Turn, isGameEnded, uiState.gameType) {
+                        gameState.isPlayer2Turn && !isGameEnded && uiState.gameType == GameType.PLAYER_VS_PLAYER
+                    }
+
                     TierRowItems(
                         modifier = Modifier.constrainAs(player2) {
                             if (rowLayout) {
@@ -174,15 +242,56 @@ private fun GameScreen(
                                 width = Dimension.fillToConstraints
                             }
                         },
-                        items = uiState.player2Items,
+                        items = gameState.player2Items,
                         player = Player.PLAYER_2,
                         rowLayout = rowLayout,
-                        winner = winner,
-                        enabled = uiState.isPlayer2Turn && !uiState.board.isGameEnded,
+                        gameResult = gameResult,
+                        enabled = enabled,
                         tierColors = tierColors,
                         onPlayAgainClick = { onEvent(GameScreenUiEvent.OnResetClick) }
                     )
                 }
+
+                if (isGameEnded && gameResult is GameResult.Tie) {
+                    TieContent(
+                        modifier = Modifier.constrainAs(tieContent) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+
+                            width = Dimension.fillToConstraints
+                        },
+                        onPlayAgainClick = { onEvent(GameScreenUiEvent.OnResetClick) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TieContent(
+    modifier: Modifier = Modifier,
+    onPlayAgainClick: () -> Unit
+) {
+    OutlinedCard(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(MaterialTheme.spacing.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(
+                space = MaterialTheme.spacing.large,
+                alignment = Alignment.CenterHorizontally
+            )
+        ) {
+            Text(text = "It's a tie!")
+            Button(
+                onClick = onPlayAgainClick,
+            ) {
+                Text(text = "Play again")
             }
         }
     }

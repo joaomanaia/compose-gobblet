@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
+    kotlin("plugin.allopen") version "1.9.22"
 }
 
 kotlin {
@@ -27,7 +29,11 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm("desktop") {
+        compilations.create("benchmark") {
+            associateWith(compilations.getByName("main"))
+        }
+    }
 
     sourceSets {
         val desktopMain by getting
@@ -39,7 +45,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
 
             implementation(libs.koin.android)
-            implementation(libs.koin.compose)
         }
 
         commonMain.dependencies {
@@ -52,19 +57,41 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
 
             implementation(libs.koin.core)
+            implementation(libs.koin.compose)
 
             implementation(libs.material3.windowSizeClass.multiplatform)
 
-            implementation("tech.annexflow.compose:constraintlayout-compose-multiplatform:0.3.0-alpha01")
+            implementation(libs.constraintlayout.compose.multiplatform)
+        }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.assertk)
+
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
 
             implementation(libs.kotlinx.coroutines.swing)
-
-            implementation(libs.koin.compose)
         }
+
+        val desktopBenchmark by getting {
+            dependencies {
+                implementation(libs.kotlinx.benchmark.runtime)
+            }
+        }
+    }
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
+}
+
+benchmark {
+    targets {
+        register("desktopBenchmark")
     }
 }
 

@@ -1,47 +1,53 @@
 package presentation.game
 
+import core.game.GameEngine
 import core.mvvm.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class GameScreenViewModel : ViewModel() {
+class GameScreenViewModel(
+    private val gameEngine: GameEngine
+) : ViewModel() {
     private val _uiState = MutableStateFlow(GameScreenUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState = combine(
+        _uiState,
+        gameEngine.state
+    ) { uiState, gameState ->
+        uiState.copy(
+            loading = false,
+            gameState = gameState
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = GameScreenUiState(loading = true)
+    )
+
+    init {
+        viewModelScope.launch {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    gameType = gameEngine.gameType
+                )
+            }
+
+            gameEngine.start()
+        }
+    }
 
     fun onEvent(event: GameScreenUiEvent) {
         when (event) {
             is GameScreenUiEvent.OnItemClick -> {
-                _uiState.update { currentState ->
-                    // Remove the piece from the player's inventory, if it's their turn
-                    val player1Items = if (currentState.isPlayer1Turn) {
-                        currentState.player1Items - event.tier
-                    } else {
-                        currentState.player1Items
-                    }
-
-                    val player2Items = if (currentState.isPlayer2Turn) {
-                        currentState.player2Items - event.tier
-                    } else {
-                        currentState.player2Items
-                    }
-
-                    currentState.copy(
-                        board = currentState.board.insertGobbletAt(
-                            index = event.index,
-                            tier = event.tier,
-                            player = currentState.currentPlayer
-                        ),
-                        currentPlayer = currentState.currentPlayer.next(),
-                        player1Items = player1Items,
-                        player2Items = player2Items
+                viewModelScope.launch {
+                    gameEngine.makeMove(
+                        index = event.index,
+                        tier = event.tier
                     )
                 }
             }
             is GameScreenUiEvent.OnResetClick -> {
                 viewModelScope.launch {
-                    _uiState.emit(GameScreenUiState())
+                    gameEngine.reset()
                 }
             }
         }

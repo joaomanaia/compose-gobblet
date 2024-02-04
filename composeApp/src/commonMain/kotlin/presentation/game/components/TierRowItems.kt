@@ -24,7 +24,7 @@ import model.GobbletTier
 import model.Player
 import core.DragTarget
 import core.presentation.theme.TierColors
-import model.Winner
+import model.GameResult
 
 @Composable
 @ExperimentalMaterial3Api
@@ -33,7 +33,7 @@ internal fun TierRowItems(
     items: List<GobbletTier>,
     player: Player,
     rowLayout: Boolean,
-    winner: Winner? = null,
+    gameResult: GameResult? = null,
     enabled: Boolean = true,
     tierColors: TierColors = TierColors.defaultTierColors(),
     colors: TierRowItemsColors = TierRowItemsDefaults.colors(
@@ -49,7 +49,7 @@ internal fun TierRowItems(
     }
 
     val surfaceColor = colors.surfaceColor(
-        winner = winner,
+        gameResult = gameResult,
         player = player,
         enabled = enabled
     ).value
@@ -66,7 +66,7 @@ internal fun TierRowItems(
             modifier = Modifier.padding(MaterialTheme.spacing.medium),
             rowLayout = rowLayout
         ) {
-            if (winner != null && winner.first == player) {
+            if (gameResult != null && gameResult.wasWonBy(player)) {
                 WinnerContent(
                     playAgainButtonColor = playAgainButtonColor,
                     onPlayAgainClick = onPlayAgainClick
@@ -194,13 +194,13 @@ class TierRowItemsColors internal constructor(
 ) {
     @Composable
     fun surfaceColor(
-        winner: Winner?,
+        gameResult: GameResult?,
         player: Player,
         enabled: Boolean
     ): State<Color> = rememberUpdatedState(
         newValue = when {
-            winner != null && winner.first == Player.PLAYER_1 -> player1WinnerSurfaceColor
-            winner != null && winner.first == Player.PLAYER_2 -> player2WinnerSurfaceColor
+            gameResult != null && gameResult.wasWonBy(Player.PLAYER_1) -> player1WinnerSurfaceColor
+            gameResult != null && gameResult.wasWonBy(Player.PLAYER_2) -> player2WinnerSurfaceColor
             enabled && player == Player.PLAYER_1 -> player1SurfaceColor
             enabled && player == Player.PLAYER_2 -> player2SurfaceColor
             else -> disabledSurfaceColor

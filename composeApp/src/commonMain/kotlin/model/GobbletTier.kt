@@ -26,9 +26,9 @@ value class GobbletTier private constructor(
     }
 
     companion object {
-        val TIER_1 = GobbletTier(1)
-        val TIER_2 = GobbletTier(2)
-        val TIER_3 = GobbletTier(3)
+        val TIER_1 = GobbletTier(tier = 1)
+        val TIER_2 = GobbletTier(tier = 2)
+        val TIER_3 = GobbletTier(tier = 3)
 
         @JvmField
         val allTiers = listOf(TIER_1, TIER_2, TIER_3)
@@ -36,9 +36,9 @@ value class GobbletTier private constructor(
 
     val icon: ImageVector
         get() = when (tier) {
-            1 -> GobbletTierIcons.Tier1
-            2 -> GobbletTierIcons.Tier2
-            3 -> GobbletTierIcons.Tier3
+            TIER_1.tier -> GobbletTierIcons.Tier1
+            TIER_2.tier -> GobbletTierIcons.Tier2
+            TIER_3.tier -> GobbletTierIcons.Tier3
             else -> throw IllegalArgumentException("Invalid tier: $tier")
         }
 

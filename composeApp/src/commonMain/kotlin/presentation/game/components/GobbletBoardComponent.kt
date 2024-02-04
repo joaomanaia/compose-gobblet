@@ -14,12 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import model.GobbletBoardItem
-import model.GobbletTier
 import core.DropTarget
 import core.presentation.theme.TierColors
 import model.Player
-import model.Winner
+import model.GobbletBoardItem
+import model.GameResult
+import model.GobbletTier
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -27,7 +27,7 @@ import kotlin.math.sqrt
 internal fun GobbletBoardComponent(
     modifier: Modifier = Modifier,
     boardGobblets: List<GobbletBoardItem?> = emptyList(),
-    winner: Winner? = null,
+    gameResult: GameResult? = null,
     currentPlayer: Player,
     tierColors: TierColors = TierColors.defaultTierColors(),
     colors: BoardColors = BoardDefaults.colors(
@@ -53,10 +53,10 @@ internal fun GobbletBoardComponent(
                 gridSize = boardSize,
                 gridColor = colors.gridColor,
             ).then(
-                if (winner != null) {
+                if (gameResult != null && gameResult is GameResult.Winner) {
                     Modifier.drawWinnerLine(
-                        winner = winner,
-                        color = colors.winnerLineColor(player = winner.first).value,
+                        winner = gameResult,
+                        color = colors.winnerLineColor(player = gameResult.player).value,
                     )
                 } else Modifier
             ),
@@ -185,13 +185,13 @@ private fun Modifier.drawBackgroundGrid(
 }
 
 private fun Modifier.drawWinnerLine(
-    winner: Winner,
+    winner: GameResult.Winner,
     color: Color,
     gridSize: Int = 3,
 ) = drawWithContent {
     drawContent()
 
-    val winnerLine = winner.second
+    val winnerLine = winner.line
 
     val squareHeight = size.height / gridSize
     val squareMiddleHeight = squareHeight / 2
