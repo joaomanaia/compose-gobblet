@@ -2,12 +2,12 @@
 # Gobblet Gobblers Game
 
 This is a simple implementation of the Gobblet Gobblers game using Compose Multiplatform.
-Currently, it supports Android and Desktop.
+Currently, it supports Android, Desktop and Web.
 
 > **Warning**
 > This game is still in development.
 
-<img src="readme_images/gobblet_desktop2.png" height="350">
+<img src="readme_images/gobblet_desktop2.png" alt="Game screenshot" />
 
 ## Build With
 
