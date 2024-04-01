@@ -29,10 +29,12 @@ internal fun GobbletBoardComponent(
     boardGobblets: List<GobbletBoardItem?> = emptyList(),
     gameResult: GameResult? = null,
     currentPlayer: Player,
+    selectedTier: GobbletTier?,
     tierColors: TierColors = TierColors.defaultTierColors(),
     colors: BoardColors = BoardDefaults.colors(
         tierColors = tierColors
     ),
+    onItemClick: (index: Int) -> Unit = {},
     onItemDrop: (
         index: Int,
         tier: GobbletTier
@@ -82,8 +84,11 @@ internal fun GobbletBoardComponent(
                             onItemDrop(rowIndex + columnIndex * boardSize, droppedTier)
                         },
                     ) { isInBound, draggingTier ->
-                        val canBeStacked = remember(draggingTier, item) {
-                            draggingTier != null && draggingTier canBeStackedOn item?.tier
+                        val canBeStacked = remember(draggingTier, item, selectedTier) {
+                            val canBeStackedByDragging = draggingTier != null && draggingTier canBeStackedOn item?.tier
+                            val canBeStackedBySelected = selectedTier != null && selectedTier canBeStackedOn item?.tier
+
+                            canBeStackedByDragging || canBeStackedBySelected
                         }
 
                         val surfaceColor = colors.surfaceColor(
@@ -97,7 +102,9 @@ internal fun GobbletBoardComponent(
                                 .fillMaxSize()
                                 .padding(2.dp),
                             tonalElevation = if (isInBound) 2.dp else 0.dp,
-                            color = surfaceColor.value
+                            color = surfaceColor.value,
+                            enabled = isInBound || canBeStacked,
+                            onClick = { onItemClick(rowIndex + columnIndex * boardSize) }
                         ) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),

@@ -1,10 +1,11 @@
 package presentation.game.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,8 +17,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import core.presentation.theme.spacing
 import model.GobbletTier
@@ -27,12 +31,13 @@ import core.presentation.theme.TierColors
 import model.GameResult
 
 @Composable
-@ExperimentalMaterial3Api
 internal fun TierRowItems(
     modifier: Modifier = Modifier,
     items: List<GobbletTier>,
     player: Player,
     rowLayout: Boolean,
+    selectedTier: GobbletTier?,
+    onTierClick: (GobbletTier) -> Unit,
     gameResult: GameResult? = null,
     enabled: Boolean = true,
     tierColors: TierColors = TierColors.defaultTierColors(),
@@ -97,13 +102,26 @@ internal fun TierRowItems(
                     ) {
                         DragTarget(
                             dataToDrop = item.key,
-                            enabled = enabled
+                            enabled = enabled && (selectedTier == null || selectedTier == item.key),
                         ) {
                             GobbletComponent(
                                 tier = item.key,
                                 player = player,
                                 enabled = enabled,
-                                colors = GobbletComponentDefaults.colors(tierColors = tierColors)
+                                colors = GobbletComponentDefaults.colors(tierColors = tierColors),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable(
+                                        enabled = enabled,
+                                        role = Role.RadioButton,
+                                        onClick = { onTierClick(item.key) }
+                                    ).graphicsLayer {
+                                        if (selectedTier == null || !enabled) return@graphicsLayer
+
+                                        if (selectedTier != item.key) {
+                                            alpha = DESELECTED_TIER_ALPHA
+                                        }
+                                    }
                             )
                         }
                     }
@@ -112,6 +130,8 @@ internal fun TierRowItems(
         }
     }
 }
+
+private const val DESELECTED_TIER_ALPHA = 0.35f
 
 @Composable
 private fun WinnerContent(

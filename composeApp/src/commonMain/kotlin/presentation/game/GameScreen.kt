@@ -17,6 +17,7 @@ import core.LongPressDraggable
 import core.presentation.theme.TierColors
 import model.GameResult
 import model.GameType
+import model.GobbletTier
 import presentation.components.button.BackIconButton
 import presentation.game.components.GobbletBoardComponent
 
@@ -116,6 +117,11 @@ private fun GameScreen(
             ) {
                 val (player1, player2, board, tieContent) = createRefs()
 
+                var selectedTier by remember { mutableStateOf<GobbletTier?>(null) }
+                val changeTierSelection = { tier: GobbletTier ->
+                    selectedTier = if (selectedTier == tier) null else tier
+                }
+
                 if (gameResult == null || gameResult?.wasWonBy(Player.PLAYER_1) == true) {
                     val enabled = remember(gameState.isPlayer1Turn, isGameEnded, uiState.gameType) {
                         gameState.isPlayer1Turn && !isGameEnded
@@ -140,6 +146,8 @@ private fun GameScreen(
                         items = gameState.player1Items,
                         player = Player.PLAYER_1,
                         rowLayout = rowLayout,
+                        selectedTier = selectedTier,
+                        onTierClick = changeTierSelection,
                         gameResult = gameResult,
                         enabled = enabled,
                         tierColors = tierColors,
@@ -163,10 +171,12 @@ private fun GameScreen(
                                     start.linkTo(player1.end, margin = mediumSpacing)
                                     end.linkTo(parent.end)
                                 }
+
                                 gameResult?.wasWonBy(Player.PLAYER_2) == true -> {
                                     start.linkTo(parent.start)
                                     end.linkTo(player2.start, margin = mediumSpacing)
                                 }
+
                                 gameResult is GameResult.Tie -> {
                                     start.linkTo(parent.start)
                                     end.linkTo(parent.end)
@@ -186,10 +196,12 @@ private fun GameScreen(
                                     top.linkTo(player1.bottom, margin = mediumSpacing)
                                     bottom.linkTo(parent.bottom)
                                 }
+
                                 gameResult?.wasWonBy(Player.PLAYER_2) == true -> {
                                     top.linkTo(parent.top)
                                     bottom.linkTo(player2.top, margin = mediumSpacing)
                                 }
+
                                 gameResult is GameResult.Tie -> {
                                     top.linkTo(tieContent.bottom, margin = mediumSpacing)
                                     bottom.linkTo(parent.bottom)
@@ -208,9 +220,17 @@ private fun GameScreen(
                     currentPlayer = gameState.currentPlayer,
                     boardGobblets = gameState.board.gobblets,
                     gameResult = gameResult,
+                    selectedTier = selectedTier,
                     tierColors = tierColors,
+                    onItemClick = { index ->
+                        selectedTier?.let { tier ->
+                            onEvent(GameScreenUiEvent.OnItemClick(index, tier))
+                            selectedTier = null
+                        }
+                    },
                     onItemDrop = { index, tier ->
                         onEvent(GameScreenUiEvent.OnItemClick(index, tier))
+                        selectedTier = null
                     }
                 )
 
@@ -238,6 +258,8 @@ private fun GameScreen(
                         items = gameState.player2Items,
                         player = Player.PLAYER_2,
                         rowLayout = rowLayout,
+                        selectedTier = selectedTier,
+                        onTierClick = changeTierSelection,
                         gameResult = gameResult,
                         enabled = enabled,
                         tierColors = tierColors,
