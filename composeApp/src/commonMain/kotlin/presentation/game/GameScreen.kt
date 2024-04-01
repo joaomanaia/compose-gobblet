@@ -18,6 +18,7 @@ import core.LongPressDraggable
 import core.presentation.theme.TierColors
 import model.GameResult
 import model.GameType
+import presentation.components.button.BackIconButton
 import presentation.game.components.GobbletBoardComponent
 
 @Composable
@@ -83,16 +84,7 @@ private fun GameScreen(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Gobblet") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBackClick
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
+                navigationIcon = { BackIconButton(onBackClick = onBackClick) },
                 actions = {
                     IconButton(
                         onClick = { onEvent(GameScreenUiEvent.OnResetClick) }
