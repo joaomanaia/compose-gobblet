@@ -52,7 +52,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
-            // implementation(compose.components.resources)
+            implementation(compose.components.resources)
 
             implementation(libs.kotlinx.coroutines.core)
 
@@ -144,6 +144,20 @@ compose.desktop {
                     obfuscate = true
                     optimize = true
                 }
+            }
+
+            val iconsRoot = project.file("desktop-icons")
+
+            linux {
+                iconFile.set(iconsRoot.resolve("icon-linux.png"))
+            }
+
+            windows {
+                iconFile.set(iconsRoot.resolve("icon-windows.ico"))
+            }
+
+            macOS {
+                iconFile.set(iconsRoot.resolve("icon-macos.icns"))
             }
         }
     }
