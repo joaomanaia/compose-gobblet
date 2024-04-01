@@ -2,7 +2,6 @@ package presentation.game
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.*
@@ -80,6 +79,8 @@ private fun GameScreen(
         gameResult != null
     }
 
+    var showResetDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -87,7 +88,7 @@ private fun GameScreen(
                 navigationIcon = { BackIconButton(onBackClick = onBackClick) },
                 actions = {
                     IconButton(
-                        onClick = { onEvent(GameScreenUiEvent.OnResetClick) }
+                        onClick = { showResetDialog = true }
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Refresh,
@@ -257,6 +258,31 @@ private fun GameScreen(
                     )
                 }
             }
+        }
+
+        if (showResetDialog) {
+            AlertDialog(
+                onDismissRequest = { showResetDialog = false },
+                title = { Text(text = "Reset game") },
+                text = { Text(text = "Are you sure you want to reset the game?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showResetDialog = false
+                            onEvent(GameScreenUiEvent.OnResetClick)
+                        }
+                    ) {
+                        Text(text = "Reset")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showResetDialog = false }
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                }
+            )
         }
     }
 }
