@@ -46,20 +46,21 @@ internal fun GobbletBoardComponent(
         boardGobblets.chunked(boardSize)
     }
 
+    // Draw winner line if game result is not null and is a winner
+    val winnerLineModifier = if (gameResult != null && gameResult is GameResult.Winner) {
+        Modifier.drawWinnerLine(
+            winner = gameResult,
+            color = colors.winnerLineColor(player = gameResult.player).value,
+        )
+    } else Modifier
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .drawBackgroundGrid(
                 gridSize = boardSize,
                 gridColor = colors.gridColor,
-            ).then(
-                if (gameResult != null && gameResult is GameResult.Winner) {
-                    Modifier.drawWinnerLine(
-                        winner = gameResult,
-                        color = colors.winnerLineColor(player = gameResult.player).value,
-                    )
-                } else Modifier
-            ),
+            ).then(winnerLineModifier),
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         board2d.forEachIndexed { columnIndex, rows ->
@@ -81,27 +82,31 @@ internal fun GobbletBoardComponent(
                             onItemDrop(rowIndex + columnIndex * boardSize, droppedTier)
                         },
                     ) { isInBound, draggingTier ->
-                        val canBeStacked = draggingTier != null && draggingTier canBeStackedOn item?.tier
+                        val canBeStacked = remember(draggingTier, item) {
+                            draggingTier != null && draggingTier canBeStackedOn item?.tier
+                        }
 
                         val surfaceColor = colors.surfaceColor(
                             isInBound = isInBound,
                             canBeStacked = canBeStacked,
                             player = currentPlayer
-                        ).value
+                        )
 
                         Surface(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(2.dp),
                             tonalElevation = if (isInBound) 2.dp else 0.dp,
-                            color = surfaceColor
+                            color = surfaceColor.value
                         ) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
                                 // Show preview gobblet if dragging tier is not null and can be stacked
-                                val showPreview = draggingTier != null && isInBound && canBeStacked
+                                val showPreview = remember(draggingTier, isInBound, canBeStacked) {
+                                    draggingTier != null && isInBound && canBeStacked
+                                }
 
                                 if (showPreview) {
                                     // Add preview gobblet

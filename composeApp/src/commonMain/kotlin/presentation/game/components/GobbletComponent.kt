@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.inset
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import core.presentation.theme.TierColors
@@ -38,41 +40,55 @@ internal fun GobbletComponent(
             .size(DEFAULT_TIER_SIZE)
             .aspectRatio(1f),
     ) {
-        // Width and height are the same, so we can use either
-        val radius = maxOf(size.width, size.height) / 2f
-
-        // Draw the outline first, so it's behind the container
-        drawCircle(
-            color = outlineColor,
-            radius = radius,
-            center = center
+        drawGobbletComponent(
+            outlineColor = outlineColor,
+            innerColor = innerColor,
+            contentColor = contentColor,
+            icon = icon
         )
+    }
+}
 
-        // Calculate the padding for the inner container to make the border responsive.
-        // Increase the divisor value to make the border smaller.
-        val innerContainerPadding = radius / BORDER_PADDING_DIVISOR
+internal fun DrawScope.drawGobbletComponent(
+    outlineColor: Color,
+    innerColor: Color,
+    contentColor: Color,
+    icon: VectorPainter
+) {
+    // Width and height are the same, so we can use either
+    val radius = maxOf(size.width, size.height) / 2f
 
-        // Draw the inner container
-        drawCircle(
-            color = innerColor,
-            radius = radius - innerContainerPadding,
-            center = center,
-        )
+    // Draw the outline first, so it's behind the container
+    drawCircle(
+        color = outlineColor,
+        radius = radius,
+        center = center
+    )
 
-        with(icon) {
-            inset(
-                // Center the icon in the container
-                horizontal = radius / 2f,
-                vertical = radius / 2f
-            ) {
-                draw(
-                    size = Size(
-                        width = radius,
-                        height = radius
-                    ),
-                    colorFilter = ColorFilter.tint(contentColor)
-                )
-            }
+    // Calculate the padding for the inner container to make the border responsive.
+    // Increase the divisor value to make the border smaller.
+    val innerContainerPadding = radius / BORDER_PADDING_DIVISOR
+
+    // Draw the inner container
+    drawCircle(
+        color = innerColor,
+        radius = radius - innerContainerPadding,
+        center = center,
+    )
+
+    with(icon) {
+        inset(
+            // Center the icon in the container
+            horizontal = radius / 2f,
+            vertical = radius / 2f
+        ) {
+            draw(
+                size = Size(
+                    width = radius,
+                    height = radius
+                ),
+                colorFilter = ColorFilter.tint(contentColor)
+            )
         }
     }
 }
