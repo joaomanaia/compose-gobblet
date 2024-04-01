@@ -33,8 +33,10 @@ interface GameEngine {
     suspend fun makeMove(index: Int, tier: GobbletTier)
 }
 
-internal fun defaultPlayerItems(boardSize: Int = 3): List<GobbletTier> {
-    val items =  GobbletTier.allTiers * boardSize
+internal fun defaultPlayerItems(): List<GobbletTier> {
+    val items = GobbletTier.allTiers * COUNT_PER_TIERS
 
     return items.sorted()
 }
+
+private const val COUNT_PER_TIERS = 2
