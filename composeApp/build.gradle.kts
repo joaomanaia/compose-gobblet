@@ -98,6 +98,10 @@ kotlin {
     }
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+}
+
 allOpen {
     annotation("org.openjdk.jmh.annotations.State")
 }
