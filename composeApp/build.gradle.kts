@@ -1,10 +1,13 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
     kotlin("plugin.allopen") version "1.9.22"
 }
@@ -24,7 +27,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
             }
         }
     }
@@ -35,18 +38,9 @@ kotlin {
         }
     }
 
+    jvmToolchain(17)
+
     sourceSets {
-        val desktopMain by getting
-
-        androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-
-            implementation(libs.kotlinx.coroutines.android)
-
-            implementation(libs.koin.android)
-        }
-
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -56,8 +50,12 @@ kotlin {
 
             implementation(libs.kotlinx.coroutines.core)
 
-            implementation(libs.koin.core)
+            api(project.dependencies.platform(libs.koin.bom))
+            api(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
 
             implementation(libs.material3.windowSizeClass.multiplatform)
 
@@ -71,10 +69,22 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
 
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
 
-            implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.kotlinx.coroutines.android)
+
+            implementation(libs.koin.android)
+        }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+
+                implementation(libs.kotlinx.coroutines.swing)
+
+                implementation(libs.koin.logger.slf4j)
+            }
         }
 
         val desktopBenchmark by getting {
@@ -97,7 +107,7 @@ benchmark {
 
 android {
     namespace = "me.joaomanaia.gobblet"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 34
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -105,10 +115,10 @@ android {
 
     defaultConfig {
         applicationId = "me.joaomanaia.gobblet"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = 21
+        targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1.0"
     }
     packaging {
         resources {
@@ -121,11 +131,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
-        debugImplementation(libs.compose.ui.tooling)
+        debugImplementation(compose.uiTooling)
+        debugImplementation(compose.preview)
     }
 }
 
@@ -161,8 +172,4 @@ compose.desktop {
             }
         }
     }
-}
-
-compose.experimental {
-    web.application {}
 }

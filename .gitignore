@@ -26,3 +26,5 @@ captures
 !.idea/runConfigurations/
 
 kotlin-js-store
+
+.kotlin
