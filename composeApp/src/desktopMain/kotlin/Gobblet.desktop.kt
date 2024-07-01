@@ -9,7 +9,7 @@ import org.jetbrains.compose.resources.painterResource
 import presentation.App
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun ApplicationScope.GobbletDesktop() {
     val appIcon = painterResource(Res.drawable.ic_launcher_round)
 

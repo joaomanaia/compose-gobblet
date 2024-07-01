@@ -8,8 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import core.Screen
 import core.presentation.theme.GobbletTheme
-import di.gameModule
-import org.koin.compose.KoinApplication
+import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 import presentation.game.GameScreen
@@ -18,16 +17,12 @@ import presentation.selector.GameSelectorScreen
 @Composable
 @ExperimentalMaterial3Api
 fun App() {
-    KoinApplication(
-        application = {
-            modules(gameModule)
-        }
-    ) {
-        GobbletTheme {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
+    GobbletTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            KoinContext {
                 var currentScreen by remember { mutableStateOf<Screen>(Screen.GameSelector) }
 
                 when (val screen = currentScreen) {
@@ -40,6 +35,7 @@ fun App() {
                             }
                         )
                     }
+
                     is Screen.Game -> {
                         GameScreen(
                             viewModel = koinInject {

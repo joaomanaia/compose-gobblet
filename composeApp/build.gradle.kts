@@ -55,6 +55,9 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
+            implementation(libs.slf4j.api)
+            implementation(libs.slf4j.simple)
+
             implementation(libs.androidx.lifecycle.viewmodel.compose)
 
             implementation(libs.material3.windowSizeClass.multiplatform)
